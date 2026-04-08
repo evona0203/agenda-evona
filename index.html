@@ -462,7 +462,8 @@ function doSync(){
   if (!backUrl) return;
   _syncPending = true;
   _lastSync = Date.now();
-  const payload = encodeURIComponent(JSON.stringify({events, todos}));
+  // Inclut les IDs supprimés pour que le Sheet les retire aussi
+  const payload = encodeURIComponent(JSON.stringify({events, todos, deleted:[...deletedIds]}));
   const cb = '_sync' + Date.now();
   window[cb] = (r) => {
     delete window[cb];
@@ -514,6 +515,19 @@ async function loadBackend(){
     if (data.events && Array.isArray(data.events)) {
       const localIds = new Set(events.map(e => e.id));
       // Items du Sheet absents en local = nouveaux depuis un autre appareil
+      // Applique les suppressions faites sur d'autres appareils
+      if (data.deleted && Array.isArray(data.deleted)) {
+        data.deleted.forEach(id => {
+          if (!deletedIds.has(id)) {
+            deletedIds.add(id);
+            events = events.filter(e => e.id !== id);
+            todos = todos.filter(t => t.id !== id);
+          }
+        });
+        localStorage.setItem('ev_deleted', JSON.stringify([...deletedIds]));
+        localStorage.setItem('ev_events', JSON.stringify(events));
+        localStorage.setItem('ev_todos', JSON.stringify(todos));
+      }
       const newFromSheet = data.events.filter(e => e.id && !localIds.has(e.id) && !deletedIds.has(e.id));
       if (newFromSheet.length > 0) {
         events = [...events, ...newFromSheet];
