@@ -85,14 +85,14 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
 .mv{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .mh{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--bd);flex-shrink:0;}
 .mhc{padding:7px 0;text-align:center;font-size:0.67rem;font-weight:600;color:var(--tm);text-transform:uppercase;}@media(max-width:680px){.mhc{padding:5px 0;font-size:0.58rem;}}
-.mg{flex:1;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(75px,1fr);overflow-y:auto;}
-.mc{border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:5px;cursor:pointer;transition:background .1s;}@media(max-width:680px){.mc{padding:3px;min-height:55px;}}
+.mg{flex:1;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(75px,1fr);overflow-y:auto;}@media(max-width:680px){.mg{grid-auto-rows:70px;}}
+.mc{border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:5px;cursor:pointer;transition:background .1s;overflow:hidden;}@media(max-width:680px){.mc{padding:3px;min-height:55px;max-height:80px;overflow:hidden;}}
 .mc:hover{background:var(--sf2);}
 .mc:nth-child(7n){border-right:none;}
 .mc.today .dn2{background:var(--ac);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
 .mc.om .dn2{opacity:.28;}
-.dn2{font-size:0.75rem;font-weight:600;margin-bottom:3px;}
-.tp{display:flex;align-items:center;gap:3px;padding:2px 5px;border-radius:4px;font-size:0.65rem;font-weight:500;margin-bottom:2px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:100%;}
+.dn2{font-size:0.75rem;font-weight:600;margin-bottom:3px;flex-shrink:0;}
+.tp{display:flex;align-items:center;gap:3px;padding:2px 5px;border-radius:4px;font-size:0.65rem;font-weight:500;margin-bottom:2px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:100%;width:100%;}
 .tp:hover{filter:brightness(1.15);}
 .tp .d{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.6);flex-shrink:0;}
 .mt{font-size:0.62rem;color:var(--tm);padding:1px 5px;}
@@ -404,7 +404,7 @@ textarea{resize:vertical;min-height:58px;}
 const PERSONS=[
   {id:'p1',name:'Kevin',   ini:'KB',color:'#7c6aff'},
   {id:'p2',name:'Antony',  ini:'AR',color:'#ff6a8a'},
-  {id:'p3',name:'Thibaut',   ini:'TM',color:'#6affd4'},
+  {id:'p3',name:'Thibaud',   ini:'TM',color:'#6affd4'},
   {id:'p4',name:'', ini:'',color:'#ffb86a'},
   {id:'p5',name:'',  ini:'',color:'#6ab8ff'},
 ];
@@ -414,6 +414,7 @@ const CATCOL={meeting:'#7c6aff',task:'#6affd4',deadline:'#ff6a8a',other:'#ffb86a
 
 let events=JSON.parse(localStorage.getItem('ev_events')||'[]');
 let todos=JSON.parse(localStorage.getItem('ev_todos')||'[]');
+let deletedIds=new Set(JSON.parse(localStorage.getItem('ev_deleted')||'[]'));
 let view='week';
 let cd=new Date();
 let fp=[];
@@ -513,7 +514,7 @@ async function loadBackend(){
     if (data.events && Array.isArray(data.events)) {
       const localIds = new Set(events.map(e => e.id));
       // Items du Sheet absents en local = nouveaux depuis un autre appareil
-      const newFromSheet = data.events.filter(e => e.id && !localIds.has(e.id));
+      const newFromSheet = data.events.filter(e => e.id && !localIds.has(e.id) && !deletedIds.has(e.id));
       if (newFromSheet.length > 0) {
         events = [...events, ...newFromSheet];
         localStorage.setItem('ev_events', JSON.stringify(events));
@@ -539,7 +540,7 @@ async function loadBackend(){
     // TODOS : même logique
     if (data.todos && Array.isArray(data.todos)) {
       const localIds = new Set(todos.map(t => t.id));
-      const newFromSheet = data.todos.filter(t => t.id && !localIds.has(t.id));
+      const newFromSheet = data.todos.filter(t => t.id && !localIds.has(t.id) && !deletedIds.has(t.id));
       if (newFromSheet.length > 0) {
         todos = [...todos, ...newFromSheet];
         localStorage.setItem('ev_todos', JSON.stringify(todos));
@@ -782,7 +783,12 @@ function claimTd(id){
   });
   saveTd();render();toast(`✋ ${mp.name} prend en charge cette tâche`);
 }
-function delTd(id){todos=todos.filter(t=>t.id!==id);saveTd();render();toast('Supprimé');}
+function delTd(id){
+  todos=todos.filter(t=>t.id!==id);
+  deletedIds.add(id);
+  localStorage.setItem('ev_deleted', JSON.stringify([...deletedIds]));
+  saveTd();render();toast('Supprimé');
+}
 
 // ═════════════════════════════════════════════
 //  MODALS AGENDA
@@ -840,7 +846,13 @@ function showDt(id){
     ${ev.createdBy?`<div style="color:var(--tm);font-size:0.72rem;margin-top:10px">Créé par ${ev.createdBy}</div>`:''}`;
   document.getElementById('mDt').classList.add('open');
 }
-function deleteEvent(){events=events.filter(e=>e.id!==detEvId);saveEv();cm('mDt');render();toast('Supprimé');}
+function deleteEvent(){
+  // Marque comme supprimé pour éviter qu'il revienne du Sheet
+  events=events.filter(e=>e.id!==detEvId);
+  deletedIds.add(detEvId);
+  localStorage.setItem('ev_deleted', JSON.stringify([...deletedIds]));
+  saveEv();cm('mDt');render();toast('Supprimé');
+}
 function editEvent(){const ev=events.find(e=>e.id===detEvId);if(!ev)return;cm('mDt');openEvEdit(ev);}
 
 // ═════════════════════════════════════════════
