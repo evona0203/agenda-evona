@@ -1,6 +1,6 @@
-// Agenda Evona — Service Worker v5
+// Agenda Evona — Service Worker v6
 // ⚠️  Incrémente ce numéro à chaque déploiement pour vider le cache
-const CACHE_NAME = 'evona-cache-v5';
+const CACHE_NAME = 'evona-cache-v6';
 
 const PRECACHE = [
   './index.html',
