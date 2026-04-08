@@ -11,56 +11,55 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Agenda Evona</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f0f13;--sf:#17171e;--sf2:#1e1e28;--bd:#2a2a38;--ac:#7c6aff;--ac2:#ff6a8a;--ac3:#6affd4;--ac4:#ffb86a;--tx:#e8e8f0;--tm:#7a7a96;--r:12px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);}
+:root{
+  --bg:#0f0f13;--sf:#17171e;--sf2:#1e1e28;--bd:#2a2a38;
+  --ac:#7c6aff;--ac2:#ff6a8a;--ac3:#6affd4;--ac4:#ffb86a;
+  --tx:#e8e8f0;--tm:#7a7a96;--r:12px;
+  --sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overscroll-behavior:none;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overflow:hidden;}
 .shell{display:flex;flex-direction:column;height:100dvh;padding-top:var(--st);}
 
 /* HEADER */
-header{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0;gap:8px;}@media(max-width:680px){header{padding:8px 10px;gap:6px;}}
-.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;letter-spacing:-.5px;white-space:nowrap;}@media(max-width:680px){.logo .logo-full{display:none;}}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--sf);border-bottom:1px solid var(--bd);flex-shrink:0;gap:8px;}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;letter-spacing:-.5px;white-space:nowrap;}
 .logo span{color:var(--ac);}
 .hd-nav{display:flex;gap:3px;background:var(--bg);border-radius:10px;padding:3px;}
 .vbtn{padding:6px 10px;border:none;background:transparent;color:var(--tm);border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;transition:all .2s;white-space:nowrap;}
 .vbtn.active{background:var(--ac);color:#fff;}
-.btn-add{display:flex;align-items:center;gap:5px;padding:8px 12px;background:var(--ac);color:#fff;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.83rem;cursor:pointer;white-space:nowrap;flex-shrink:0;}@media(max-width:680px){.btn-add{padding:7px 10px;font-size:0.78rem;}}
+.hdr-right{display:flex;gap:7px;align-items:center;flex-shrink:0;}
+.btn-cfg{background:var(--sf2);border:1px solid var(--bd);color:var(--tm);border-radius:9px;padding:7px 10px;cursor:pointer;font-size:1rem;line-height:1;}
+.btn-add{display:flex;align-items:center;gap:5px;padding:8px 13px;background:var(--ac);color:#fff;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.82rem;cursor:pointer;white-space:nowrap;}
 
-/* BANNERS */
-.banner{font-size:0.77rem;padding:6px 14px;display:flex;align-items:center;gap:7px;flex-shrink:0;}
-.banner-install{background:rgba(124,106,255,.1);border-bottom:1px solid rgba(124,106,255,.2);color:var(--ac);display:none;}
-.banner-install.show{display:flex;}
-.banner-backend{background:rgba(255,200,0,.07);border-bottom:1px solid rgba(255,200,0,.2);color:#ffd060;}
-.banner-backend.ok{background:rgba(106,255,212,.07);border-color:rgba(106,255,212,.2);color:var(--ac3);}
-.sdot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;}
-.sdot.pulse{animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-.bbtn{background:none;border:1px solid currentColor;color:inherit;padding:2px 8px;border-radius:5px;cursor:pointer;font-size:0.73rem;margin-left:auto;white-space:nowrap;font-family:'DM Sans',sans-serif;}
-.install-btn-b{background:var(--ac);color:#fff;border:none;padding:3px 10px;border-radius:5px;cursor:pointer;font-size:0.73rem;font-family:'DM Sans',sans-serif;}
-.bx{background:none;border:none;color:inherit;cursor:pointer;font-size:1rem;padding:0 2px;}
+/* SYNC STATUS */
+.sync-bar{font-size:0.74rem;padding:5px 14px;display:flex;align-items:center;gap:6px;flex-shrink:0;background:rgba(124,106,255,.08);border-bottom:1px solid rgba(124,106,255,.15);color:var(--ac);}
+.sync-bar.warn{background:rgba(255,200,0,.07);border-color:rgba(255,200,0,.2);color:#ffd060;}
+.sync-bar.ok{background:rgba(106,255,212,.07);border-color:rgba(106,255,212,.2);color:var(--ac3);}
+.sdot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.sdot.pulse{animation:pu 2s infinite;}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
+@media(max-width:680px){.sync-bar{display:none;}}
 
 /* BODY */
 .body-area{display:flex;flex:1;min-height:0;}
 
 /* SIDEBAR */
-aside{width:195px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);padding:14px 11px;display:flex;flex-direction:column;gap:18px;overflow-y:auto;}
+aside{width:190px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);padding:14px 11px;display:flex;flex-direction:column;gap:18px;overflow-y:auto;}
 @media(max-width:680px){aside{display:none;}}
-.ast{font-family:'Syne',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--tm);margin-bottom:6px;}
-
-/* Mini cal */
+.ast{font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--tm);margin-bottom:6px;}
 .mc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
 .mc-head button{background:none;border:none;color:var(--tm);cursor:pointer;font-size:0.85rem;}
 .mc-month{font-weight:600;font-size:0.8rem;}
 .mc-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;text-align:center;}
-.mc-grid .dn{color:var(--tm);font-size:0.62rem;padding:2px 0;}
-.mc-grid .dc{padding:3px 1px;border-radius:5px;cursor:pointer;font-size:0.75rem;}
+.mc-grid .dn{color:var(--tm);font-size:0.6rem;padding:2px 0;}
+.mc-grid .dc{padding:3px 1px;border-radius:5px;cursor:pointer;font-size:0.73rem;}
 .mc-grid .dc:hover{background:var(--sf2);}
 .mc-grid .dc.today{background:var(--ac);color:#fff;font-weight:700;}
 .mc-grid .dc.om{opacity:.28;}
-
-/* Person filter */
 .pl{display:flex;flex-direction:column;gap:3px;}
 .pch{display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:7px;cursor:pointer;transition:background .15s;user-select:none;}
 .pch:hover{background:var(--sf2);}
@@ -71,106 +70,138 @@ aside{width:195px;flex-shrink:0;background:var(--sf);border-right:1px solid var(
 .fa{padding:5px 7px;border-radius:7px;border:none;background:transparent;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;text-align:left;transition:background .15s;}
 .fa:hover{background:var(--sf2);}
 .fa.active{background:var(--ac);color:#fff;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--tm);}
+.leg-dot{width:8px;height:8px;border-radius:3px;flex-shrink:0;}
 
 /* MAIN */
 main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
-.cal-nav{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--bd);background:var(--sf);flex-shrink:0;}@media(max-width:680px){.cal-nav{padding:7px 10px;gap:5px;}}
-.cn-btn{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:0.82rem;transition:background .15s;}@media(max-width:680px){.cn-btn{padding:4px 8px;font-size:0.75rem;}}
+.cal-nav{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--bd);background:var(--sf);flex-shrink:0;}
+.cn-btn{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:0.8rem;}
 .cn-btn:hover{background:var(--bd);}
-.period{font-family:'Syne',sans-serif;font-size:0.92rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}@media(max-width:680px){.period{font-size:0.78rem;}}
-
+.period{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@media(max-width:680px){.cal-nav{padding:6px 10px;gap:6px;}.period{font-size:0.76rem;}.cn-btn{padding:4px 8px;font-size:0.74rem;}}
 #calContent{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 
 /* MONTH */
 .mv{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .mh{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--bd);flex-shrink:0;}
-.mhc{padding:7px 0;text-align:center;font-size:0.67rem;font-weight:600;color:var(--tm);text-transform:uppercase;}@media(max-width:680px){.mhc{padding:5px 0;font-size:0.58rem;}}
-.mg{flex:1;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(75px,1fr);overflow-y:auto;}@media(max-width:680px){.mg{grid-auto-rows:70px;}}
-.mc{border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:5px;cursor:pointer;transition:background .1s;overflow:hidden;}@media(max-width:680px){.mc{padding:3px;min-height:55px;max-height:80px;overflow:hidden;}}
+.mhc{padding:6px 0;text-align:center;font-size:0.66rem;font-weight:600;color:var(--tm);text-transform:uppercase;}
+@media(max-width:680px){.mhc{padding:4px 0;font-size:0.57rem;}}
+.mg{flex:1;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(70px,1fr);overflow-y:auto;}
+@media(max-width:680px){.mg{grid-auto-rows:68px;}}
+.mc{border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:5px;cursor:pointer;transition:background .1s;overflow:hidden;}
 .mc:hover{background:var(--sf2);}
 .mc:nth-child(7n){border-right:none;}
 .mc.today .dn2{background:var(--ac);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
 .mc.om .dn2{opacity:.28;}
-.dn2{font-size:0.75rem;font-weight:600;margin-bottom:3px;flex-shrink:0;}
-.tp{display:flex;align-items:center;gap:3px;padding:2px 5px;border-radius:4px;font-size:0.65rem;font-weight:500;margin-bottom:2px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:100%;width:100%;}
+@media(max-width:680px){.mc{padding:3px;}}
+.dn2{font-size:0.74rem;font-weight:600;margin-bottom:3px;flex-shrink:0;}
+.tp{display:flex;align-items:center;gap:3px;padding:2px 5px;border-radius:4px;font-size:0.64rem;font-weight:500;margin-bottom:2px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%;}
 .tp:hover{filter:brightness(1.15);}
-.tp .d{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.6);flex-shrink:0;}
-.mt{font-size:0.62rem;color:var(--tm);padding:1px 5px;}
+.tp-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.6);flex-shrink:0;}
+.more-t{font-size:0.6rem;color:var(--tm);padding:1px 5px;}
 
 /* WEEK */
 .wv{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.wkh{display:grid;grid-template-columns:42px repeat(7,1fr);border-bottom:1px solid var(--bd);background:var(--sf);flex-shrink:0;}
-.wkd{padding:8px 0;text-align:center;border-left:1px solid var(--bd);}
-.wkd .wd{font-size:0.62rem;color:var(--tm);text-transform:uppercase;}@media(max-width:680px){.wkd .wd{font-size:0.55rem;}}
-.wkd .wn{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;line-height:1.1;}@media(max-width:680px){.wkd .wn{font-size:0.88rem;}}
+.wkh{display:grid;grid-template-columns:44px repeat(7,1fr);border-bottom:1px solid var(--bd);background:var(--sf);flex-shrink:0;}
+@media(max-width:680px){.wkh{grid-template-columns:32px repeat(7,1fr);}}
+.wkd{padding:7px 0;text-align:center;border-left:1px solid var(--bd);}
+.wkd .wd{font-size:0.6rem;color:var(--tm);text-transform:uppercase;}
+.wkd .wn{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;line-height:1.1;}
+@media(max-width:680px){.wkd .wd{font-size:0.54rem;}.wkd .wn{font-size:0.85rem;}}
 .wkd.today .wn{color:var(--ac);}
 .wb{display:flex;flex:1;overflow-y:auto;}
-.wtc{width:42px;flex-shrink:0;border-right:1px solid var(--bd);}@media(max-width:680px){.wtc{width:32px;}}
-.wts{height:50px;display:flex;align-items:flex-start;padding:3px 4px 0;font-size:0.6rem;color:var(--tm);border-bottom:1px solid var(--bd);}@media(max-width:680px){.wts{height:44px;font-size:0.55rem;padding:2px 3px 0;}}
+.wtc{width:44px;flex-shrink:0;border-right:1px solid var(--bd);}
+@media(max-width:680px){.wtc{width:32px;}}
+.wts{height:48px;display:flex;align-items:flex-start;padding:3px 4px 0;font-size:0.58rem;color:var(--tm);border-bottom:1px solid var(--bd);}
+@media(max-width:680px){.wts{height:44px;font-size:0.52rem;padding:2px 3px 0;}}
 .wdg{flex:1;display:grid;grid-template-columns:repeat(7,1fr);}
 .wdc{border-left:1px solid var(--bd);position:relative;}
-.whl{height:50px;border-bottom:1px solid var(--bd);}@media(max-width:680px){.whl{height:44px;}}
-.wtb{position:absolute;left:2px;right:2px;border-radius:6px;padding:3px 4px;font-size:0.65rem;font-weight:500;overflow:hidden;cursor:pointer;transition:filter .15s;z-index:2;}
+.whl{height:48px;border-bottom:1px solid var(--bd);}
+@media(max-width:680px){.whl{height:44px;}}
+.wtb{position:absolute;left:2px;right:2px;border-radius:5px;padding:3px 4px;font-size:0.65rem;font-weight:500;overflow:hidden;cursor:pointer;z-index:2;}
 .wtb:hover{filter:brightness(1.15);}
 .wtt{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.wtm{opacity:.7;font-size:0.58rem;}
+.wtm{opacity:.7;font-size:0.57rem;}
 
 /* DAY */
 .dv{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .db{display:flex;flex:1;overflow-y:auto;}
-.dtc{width:50px;flex-shrink:0;border-right:1px solid var(--bd);}@media(max-width:680px){.dtc{width:36px;}}
-.dts{height:62px;display:flex;align-items:flex-start;padding:4px 7px 0;font-size:0.65rem;color:var(--tm);border-bottom:1px solid var(--bd);}@media(max-width:680px){.dts{height:52px;font-size:0.58rem;padding:3px 4px 0;}}
+.dtc{width:50px;flex-shrink:0;border-right:1px solid var(--bd);}
+@media(max-width:680px){.dtc{width:36px;}}
+.dts{height:60px;display:flex;align-items:flex-start;padding:4px 7px 0;font-size:0.63rem;color:var(--tm);border-bottom:1px solid var(--bd);}
+@media(max-width:680px){.dts{height:52px;font-size:0.57rem;padding:3px 4px 0;}}
 .dec{flex:1;position:relative;}
-.dhl{height:62px;border-bottom:1px solid var(--bd);}@media(max-width:680px){.dhl{height:52px;}}
-.dtb{position:absolute;left:8px;right:8px;border-radius:10px;padding:6px 10px;cursor:pointer;transition:filter .15s;z-index:2;}
+.dhl{height:60px;border-bottom:1px solid var(--bd);}
+@media(max-width:680px){.dhl{height:52px;}}
+.dtb{position:absolute;left:8px;right:8px;border-radius:10px;padding:7px 10px;cursor:pointer;z-index:2;}
 .dtb:hover{filter:brightness(1.15);}
-.dti{font-weight:700;font-size:0.83rem;}
+.dti{font-weight:700;font-size:0.85rem;}
 .dtm{opacity:.7;font-size:0.7rem;margin-top:2px;}
 .dpp{margin-top:3px;display:flex;gap:3px;}
 .dav{width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.52rem;font-weight:700;border:1.5px solid rgba(255,255,255,.2);}
 
-/* TODO VIEW */
-.tv{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:18px;}@media(max-width:680px){.tv{padding:10px;gap:12px;}}
-.ttb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+/* TODO */
+.tv{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:16px;}
+@media(max-width:680px){.tv{padding:10px;gap:12px;}}
+.ttb{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 .tfbtn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--bd);background:transparent;color:var(--tm);font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;transition:all .15s;}
 .tfbtn.active{background:var(--ac);border-color:var(--ac);color:#fff;}
-.tsec{font-family:'Syne',sans-serif;font-size:0.76rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--tm);display:flex;align-items:center;gap:7px;}
-.tcnt{background:var(--sf2);border-radius:20px;padding:1px 7px;font-size:0.7rem;color:var(--tm);font-weight:600;}
-.tlist{display:flex;flex-direction:column;gap:7px;}
-.tc{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;display:flex;gap:11px;align-items:flex-start;transition:border-color .2s;cursor:pointer;}@media(max-width:680px){.tc{padding:10px 11px;gap:9px;border-radius:12px;}}
+.tsec{font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--tm);display:flex;align-items:center;gap:7px;}
+.tcnt{background:var(--sf2);border-radius:20px;padding:1px 7px;font-size:0.7rem;}
+.tlist{display:flex;flex-direction:column;gap:7px;margin-top:9px;}
+.tc{background:var(--sf);border:1px solid var(--bd);border-radius:13px;padding:12px 14px;display:flex;gap:11px;align-items:flex-start;cursor:pointer;transition:border-color .2s;}
 .tc:hover{border-color:var(--ac);}
 .tc.done{opacity:.5;}
 .tc.done .tct{text-decoration:line-through;color:var(--tm);}
-.tchk{width:21px;height:21px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;margin-top:1px;transition:all .2s;font-size:0.72rem;}
+@media(max-width:680px){.tc{padding:10px 11px;gap:9px;}}
+.tchk{width:21px;height:21px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;margin-top:1px;transition:all .2s;font-size:0.7rem;}
 .tchk:hover{border-color:var(--ac3);}
 .tc.done .tchk{background:var(--ac3);border-color:var(--ac3);color:#0f0f13;}
 .tb{flex:1;min-width:0;}
 .tct{font-weight:600;font-size:0.9rem;margin-bottom:3px;}
 .tcd{font-size:0.78rem;color:var(--tm);margin-bottom:7px;}
-.tmt{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
-.tpr{font-size:0.7rem;font-weight:600;padding:2px 7px;border-radius:5px;text-transform:uppercase;letter-spacing:.4px;}
+.tmt{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.tpr{font-size:0.68rem;font-weight:600;padding:2px 7px;border-radius:5px;text-transform:uppercase;}
 .ph{background:rgba(255,106,138,.15);color:var(--ac2);}
 .pm{background:rgba(255,184,106,.15);color:var(--ac4);}
-.pl{background:rgba(106,255,212,.1);color:var(--ac3);}
-.tavs{display:flex;gap:3px;}
-.tav{width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.57rem;font-weight:700;border:1.5px solid var(--bg);margin-left:-5px;}
+.pl2{background:rgba(106,255,212,.1);color:var(--ac3);}
+.tavs{display:flex;}
+.tav{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:700;border:1.5px solid var(--bg);margin-left:-5px;}
 .tav:first-child{margin-left:0;}
-.tclaim{font-size:0.73rem;padding:3px 9px;border-radius:20px;border:1px solid var(--ac);background:transparent;color:var(--ac);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;}
+.tclaim{font-size:0.72rem;padding:2px 9px;border-radius:20px;border:1px solid var(--ac);background:transparent;color:var(--ac);cursor:pointer;font-family:'DM Sans',sans-serif;}
 .tclaim:hover{background:var(--ac);color:#fff;}
-.tclaimed{font-size:0.73rem;color:var(--tm);font-style:italic;}
-.tact{display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0;}
-.tdel{background:none;border:none;color:var(--tm);cursor:pointer;font-size:0.95rem;padding:2px;}
+.tclaimed{font-size:0.72rem;color:var(--tm);font-style:italic;}
+.tdel{background:none;border:none;color:var(--tm);cursor:pointer;font-size:0.9rem;padding:2px;flex-shrink:0;}
 .tdel:hover{color:var(--ac2);}
-.t-empty{text-align:center;padding:36px 20px;color:var(--tm);font-size:0.88rem;}
-.t-empty-i{font-size:2.2rem;margin-bottom:8px;}
+.t-empty{text-align:center;padding:36px 20px;color:var(--tm);}
+.t-empty-i{font-size:2rem;margin-bottom:8px;}
 
 /* BOTTOM NAV */
 .bnav{display:none;background:var(--sf);border-top:1px solid var(--bd);padding:6px 0;padding-bottom:calc(6px + var(--sb));flex-shrink:0;}
-@media(max-width:680px){.bnav{display:flex;} header .hd-nav{display:none;} .banner-backend{display:none!important;} .banner-install{font-size:0.72rem;padding:5px 10px;} #mobileGear{display:flex!important;padding:6px 8px;border:1px solid var(--bd);border-radius:8px;color:var(--tm);background:var(--sf2);margin-left:0;}}
+@media(max-width:680px){.bnav{display:flex;}.hd-nav{display:none;}}
 .bnis{display:flex;flex:1;}
-.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--tm);cursor:pointer;padding:3px 0;font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;transition:color .15s;}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--tm);cursor:pointer;padding:3px 0;font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:500;transition:color .15s;}
 .bni.active{color:var(--ac);}
-.bni-ic{font-size:1.15rem;line-height:1;}
+.bni-ic{font-size:1.1rem;line-height:1;}
+.fbadge{width:7px;height:7px;background:var(--ac2);border-radius:50%;display:none;margin-left:3px;vertical-align:middle;}
+.fbadge.show{display:inline-block;}
+
+/* FILTER DRAWER */
+.fbd{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);z-index:150;opacity:0;pointer-events:none;transition:opacity .25s;}
+.fbd.open{opacity:1;pointer-events:all;}
+.fdw{position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-radius:20px 20px 0 0;border-top:1px solid var(--bd);padding:16px 18px 20px;z-index:151;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);padding-bottom:calc(20px + var(--sb));}
+.fdw.open{transform:translateY(0);}
+.fdw-handle{width:36px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 14px;}
+.fdw-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;margin-bottom:14px;}
+.fdw-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--bd);cursor:pointer;transition:all .15s;user-select:none;margin-bottom:6px;}
+.fdw-chip.active{border-color:var(--ac);background:rgba(124,106,255,.1);}
+.fdw-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0;}
+.fdw-name{flex:1;font-size:0.9rem;}
+.fdw-ck{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:0.63rem;transition:all .15s;}
+.fdw-chip.active .fdw-ck{background:var(--ac);border-color:var(--ac);color:#fff;}
+.fdw-all{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;margin-bottom:8px;font-size:0.9rem;transition:background .15s;border:1.5px solid transparent;}
+.fdw-all.active{background:var(--ac);color:#fff;border-color:var(--ac);}
 
 /* MODALS */
 .mbd{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(5px);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
@@ -179,12 +210,12 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
 .modal{background:var(--sf);border:1px solid var(--bd);border-radius:20px 20px 0 0;padding:20px 18px;width:100%;max-width:480px;max-height:92dvh;overflow-y:auto;transform:translateY(40px);transition:transform .25s;padding-bottom:calc(20px + var(--sb));}
 @media(min-width:580px){.modal{border-radius:20px;max-height:88dvh;}}
 .mbd.open .modal{transform:translateY(0);}
-.mhandle{width:38px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 16px;}
+.mhandle{width:36px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 15px;}
 @media(min-width:580px){.mhandle{display:none;}}
 .mtitle{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
 .mclose{background:none;border:none;color:var(--tm);font-size:1.15rem;cursor:pointer;}
 .fg{margin-bottom:13px;}
-label{display:block;font-size:0.73rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;}
+label{display:block;font-size:0.72rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;}
 input[type=text],input[type=date],input[type=time],textarea,select{width:100%;background:var(--bg);border:1.5px solid var(--bd);border-radius:9px;color:var(--tx);padding:9px 11px;font-family:'DM Sans',sans-serif;font-size:0.88rem;transition:border-color .15s;outline:none;appearance:none;-webkit-appearance:none;}
 input:focus,textarea:focus,select:focus{border-color:var(--ac);}
 textarea{resize:vertical;min-height:58px;}
@@ -208,467 +239,413 @@ textarea{resize:vertical;min-height:58px;}
 .dper{display:flex;align-items:center;gap:5px;background:var(--sf2);border-radius:20px;padding:3px 9px 3px 4px;font-size:0.78rem;}
 .dact{display:flex;gap:6px;margin-top:14px;}
 .prsel{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;}
-.propt{padding:5px 11px;border-radius:20px;border:1.5px solid var(--bd);font-size:0.78rem;cursor:pointer;transition:all .15s;user-select:none;font-family:'DM Sans',sans-serif;}
+.propt{padding:5px 11px;border-radius:20px;border:1.5px solid var(--bd);font-size:0.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .propt.active.ph{background:rgba(255,106,138,.15);border-color:var(--ac2);color:var(--ac2);}
 .propt.active.pm{background:rgba(255,184,106,.15);border-color:var(--ac4);color:var(--ac4);}
 .propt.active.pl{background:rgba(106,255,212,.1);border-color:var(--ac3);color:var(--ac3);}
 
 /* TOAST */
-.toast{position:fixed;bottom:calc(72px + var(--sb));right:14px;background:var(--sf);border:1px solid var(--bd);color:var(--tx);padding:9px 14px;border-radius:10px;font-size:0.83rem;font-weight:500;transform:translateY(60px);opacity:0;transition:all .3s;z-index:400;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.toast{position:fixed;bottom:calc(70px + var(--sb));right:14px;background:var(--sf);border:1px solid var(--bd);color:var(--tx);padding:9px 14px;border-radius:10px;font-size:0.82rem;font-weight:500;transform:translateY(60px);opacity:0;transition:all .3s;z-index:400;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);}
 .toast.show{transform:translateY(0);opacity:1;}
 @media(min-width:680px){.toast{bottom:22px;right:22px;}}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:4px;height:4px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px;}
-
-/* FILTER DRAWER (mobile) */
-.fdrawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:150;opacity:0;pointer-events:none;transition:opacity .25s;}
-.fdrawer-backdrop.open{opacity:1;pointer-events:all;}
-.fdrawer{position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-radius:20px 20px 0 0;border-top:1px solid var(--bd);padding:16px 18px 20px;z-index:151;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);padding-bottom:calc(20px + var(--sb));}
-.fdrawer.open{transform:translateY(0);}
-.fdrawer-handle{width:36px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 14px;}
-.fdrawer-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;margin-bottom:14px;}
-.fdrawer-persons{display:flex;flex-direction:column;gap:6px;}
-.fdrawer-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--bd);cursor:pointer;transition:all .15s;user-select:none;}
-.fdrawer-chip.active{border-color:var(--ac);background:rgba(124,106,255,.1);}
-.fdrawer-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0;}
-.fdrawer-name{flex:1;font-size:0.9rem;}
-.fdrawer-ck{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:0.65rem;transition:all .15s;}
-.fdrawer-chip.active .fdrawer-ck{background:var(--ac);border-color:var(--ac);color:#fff;}
-.fdrawer-all{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;margin-bottom:4px;font-size:0.9rem;transition:background .15s;}
-.fdrawer-all:hover{background:var(--sf2);}
-.fdrawer-all.active{background:var(--ac);color:#fff;border-radius:10px;}
-/* Filter indicator badge */
-.filter-badge{position:absolute;top:-3px;right:-3px;width:8px;height:8px;background:var(--ac2);border-radius:50%;display:none;}
-.filter-badge.show{display:block;}
-#filterNavBtn{position:relative;}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px;}
 </style>
 </head>
 <body>
 <div class="shell">
-
-  <!-- HEADER -->
   <header>
     <div class="logo">Agenda <span>Evona</span></div>
     <div class="hd-nav">
       <button class="vbtn" id="btn-day" onclick="setView('day')">Jour</button>
       <button class="vbtn active" id="btn-week" onclick="setView('week')">Semaine</button>
       <button class="vbtn" id="btn-month" onclick="setView('month')">Mois</button>
-      <button class="vbtn" id="btn-todo" onclick="setView('todo')">✓ À faire</button>
+      <button class="vbtn" id="btn-todo" onclick="setView('todo')">&#10003; À faire</button>
     </div>
-    <button class="bbtn" onclick="openBackendModal()" style="display:none" id="mobileGear" title="Paramètres">⚙️</button>
-    <button class="btn-add" id="hAddBtn" onclick="onAddClick()">
-      <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>
-      <span id="hAddTxt">Nouveau</span>
-    </button>
+    <div class="hdr-right">
+      <button class="btn-cfg" onclick="openCfg()" title="Paramètres">&#9881;</button>
+      <button class="btn-add" id="hAddBtn" onclick="onAdd()">+ <span id="hAddTxt">Nouveau</span></button>
+    </div>
   </header>
 
-  <!-- INSTALL BANNER -->
-  <div class="banner banner-install" id="installBanner">
-    📱 Installez l'app sur votre écran d'accueil
-    <button class="install-btn-b" id="installBtn">Installer</button>
-    <button class="bx" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
-  </div>
-
-  <!-- BACKEND BANNER -->
-  <div class="banner banner-backend" id="backendBanner">
+  <div class="sync-bar warn" id="syncBar">
     <span class="sdot" id="sdot"></span>
-    <span id="bannerTxt">Mode local — connectez Google Sheets pour synchroniser</span>
-    <button class="bbtn" id="bannerCfgBtn" onclick="openBackendModal()">Configurer</button>
+    <span id="syncTxt">Mode local</span>
+    <button onclick="openCfg()" style="background:none;border:1px solid currentColor;color:inherit;padding:1px 8px;border-radius:5px;cursor:pointer;font-size:0.7rem;margin-left:auto;font-family:'DM Sans',sans-serif;">Configurer</button>
   </div>
 
   <div class="body-area">
-    <!-- SIDEBAR -->
     <aside>
       <div>
         <div class="ast">Navigation</div>
         <div id="miniCal"></div>
       </div>
       <div>
-        <div class="ast">Filtrer par personne</div>
+        <div class="ast">Filtrer</div>
         <div class="pl" id="filterList"></div>
       </div>
       <div>
         <div class="ast">Catégories</div>
-        <div id="legendList" style="display:flex;flex-direction:column;gap:5px;font-size:0.78rem;"></div>
+        <div id="legendList" style="display:flex;flex-direction:column;gap:5px;"></div>
       </div>
     </aside>
-
-    <!-- MAIN -->
     <main>
       <div class="cal-nav" id="calNav">
-        <button class="cn-btn" onclick="navigate(-1)">◀</button>
+        <button class="cn-btn" onclick="navigate(-1)">&#9664;</button>
         <button class="cn-btn" onclick="goToday()" style="font-family:'DM Sans',sans-serif;font-size:0.78rem;">Auj.</button>
-        <button class="cn-btn" onclick="navigate(1)">▶</button>
+        <button class="cn-btn" onclick="navigate(1)">&#9654;</button>
         <span class="period" id="periodTxt"></span>
       </div>
       <div id="calContent"></div>
     </main>
   </div>
 
-  <!-- BOTTOM NAV -->
   <nav class="bnav">
     <div class="bnis">
-      <button class="bni" id="bnav-day" onclick="setView('day')"><span class="bni-ic">📅</span>Jour</button>
-      <button class="bni active" id="bnav-week" onclick="setView('week')"><span class="bni-ic">🗓</span>Semaine</button>
-      <button class="bni" id="bnav-month" onclick="setView('month')"><span class="bni-ic">📆</span>Mois</button>
-      <button class="bni" id="bnav-todo" onclick="setView('todo')"><span class="bni-ic">✅</span>À faire</button>
-      <button class="bni" id="filterNavBtn" onclick="openFilterDrawer()"><span class="bni-ic">👥</span>Filtrer<span class="filter-badge" id="filterBadge"></span></button>
+      <button class="bni" id="bnav-day" onclick="setView('day')"><span class="bni-ic">&#128197;</span>Jour</button>
+      <button class="bni active" id="bnav-week" onclick="setView('week')"><span class="bni-ic">&#128467;</span>Semaine</button>
+      <button class="bni" id="bnav-month" onclick="setView('month')"><span class="bni-ic">&#128198;</span>Mois</button>
+      <button class="bni" id="bnav-todo" onclick="setView('todo')"><span class="bni-ic">&#9989;</span>À faire</button>
+      <button class="bni" id="bnav-filter" onclick="openFilter()"><span class="bni-ic">&#128101;</span>Filtrer<span class="fbadge" id="fbadge"></span></button>
     </div>
   </nav>
-
-  <!-- FILTER DRAWER (mobile) -->
-  <div class="fdrawer-backdrop" id="fdrawerBd" onclick="closeFilterDrawer()"></div>
-  <div class="fdrawer" id="fdrawer">
-    <div class="fdrawer-handle"></div>
-    <div class="fdrawer-title">Filtrer par personne</div>
-    <div class="fdrawer-persons" id="fdrawerList"></div>
-  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- MODAL AGENDA -->
-<div class="mbd" id="mEv">
-  <div class="modal">
-    <div class="mhandle"></div>
-    <div class="mtitle"><span id="mEvTxt">Nouvelle tâche</span><button class="mclose" onclick="cm('mEv')">✕</button></div>
-    <div class="fg"><label>Titre</label><input type="text" id="evT" placeholder="Titre de la tâche"></div>
-    <div class="fg"><label>Description</label><textarea id="evD" placeholder="Optionnel…"></textarea></div>
-    <div class="r2">
-      <div class="fg"><label>Date</label><input type="date" id="evDt"></div>
-      <div class="fg"><label>Catégorie</label><select id="evC"><option value="meeting">Réunion</option><option value="task">Tâche</option><option value="deadline">Deadline</option><option value="other">Autre</option></select></div>
-    </div>
-    <div class="r2">
-      <div class="fg"><label>Heure début</label><input type="time" id="evS" value="09:00"></div>
-      <div class="fg"><label>Heure fin</label><input type="time" id="evE" value="10:00"></div>
-    </div>
-    <div class="fg"><label>Couleur</label><div class="cpkr" id="evCp"></div></div>
-    <div class="fg"><label>Assigner à</label><div class="psl" id="evPp"></div></div>
-    <div class="fax"><button class="bcnl" onclick="cm('mEv')">Annuler</button><button class="bsav" onclick="saveEvent()">Enregistrer</button></div>
-  </div>
+<!-- FILTER DRAWER -->
+<div class="fbd" id="fbd" onclick="closeFilter()"></div>
+<div class="fdw" id="fdw">
+  <div class="fdw-handle"></div>
+  <div class="fdw-title">Filtrer par personne</div>
+  <div id="fdwList"></div>
 </div>
 
-<!-- MODAL DETAIL AGENDA -->
-<div class="mbd" id="mDt">
-  <div class="modal">
-    <div class="mhandle"></div>
-    <div class="mtitle"><span id="dtTxt">-</span><button class="mclose" onclick="cm('mDt')">✕</button></div>
-    <div id="dtBody"></div>
-    <div class="dact">
-      <button class="bdel" onclick="deleteEvent()">🗑 Supprimer</button>
-      <button class="bedt" onclick="editEvent()">✏ Modifier</button>
-      <button class="bsav" style="margin-left:auto" onclick="cm('mDt')">Fermer</button>
+<!-- MODAL EVENT -->
+<div class="mbd" id="mEv"><div class="modal">
+  <div class="mhandle"></div>
+  <div class="mtitle"><span id="mEvTxt">Nouvelle tâche</span><button class="mclose" onclick="cm('mEv')">&#10005;</button></div>
+  <div class="fg"><label>Titre</label><input type="text" id="evT" placeholder="Titre de la tâche"></div>
+  <div class="fg"><label>Description</label><textarea id="evD" placeholder="Optionnel..."></textarea></div>
+  <div class="r2">
+    <div class="fg"><label>Date</label><input type="date" id="evDt"></div>
+    <div class="fg"><label>Catégorie</label><select id="evC"><option value="meeting">Réunion</option><option value="task">Tâche</option><option value="deadline">Deadline</option><option value="other">Autre</option></select></div>
+  </div>
+  <div class="r2">
+    <div class="fg"><label>Heure début</label><input type="time" id="evS" value="09:00"></div>
+    <div class="fg"><label>Heure fin</label><input type="time" id="evE" value="10:00"></div>
+  </div>
+  <div class="fg"><label>Couleur</label><div class="cpkr" id="evCp"></div></div>
+  <div class="fg"><label>Assigner à</label><div class="psl" id="evPp"></div></div>
+  <div class="fax"><button class="bcnl" onclick="cm('mEv')">Annuler</button><button class="bsav" onclick="saveEvent()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL DETAIL EVENT -->
+<div class="mbd" id="mDt"><div class="modal">
+  <div class="mhandle"></div>
+  <div class="mtitle"><span id="dtTxt">-</span><button class="mclose" onclick="cm('mDt')">&#10005;</button></div>
+  <div id="dtBody"></div>
+  <div class="dact">
+    <button class="bdel" onclick="deleteEvent()">&#128465; Supprimer</button>
+    <button class="bedt" onclick="editEvent()">&#9999; Modifier</button>
+    <button class="bsav" style="margin-left:auto" onclick="cm('mDt')">Fermer</button>
+  </div>
+</div></div>
+
+<!-- MODAL TODO -->
+<div class="mbd" id="mTd"><div class="modal">
+  <div class="mhandle"></div>
+  <div class="mtitle"><span id="mTdTxt">Nouvelle tâche à faire</span><button class="mclose" onclick="cm('mTd')">&#10005;</button></div>
+  <div class="fg"><label>Titre</label><input type="text" id="tdT" placeholder="Que faut-il faire ?"></div>
+  <div class="fg"><label>Description</label><textarea id="tdD" placeholder="Détails (optionnel)..."></textarea></div>
+  <div class="fg"><label>Priorité</label>
+    <div class="prsel">
+      <div class="propt ph" id="prH" onclick="selPr('high')">&#128308; Haute</div>
+      <div class="propt pm active" id="prM" onclick="selPr('medium')">&#127937; Moyenne</div>
+      <div class="propt pl" id="prL" onclick="selPr('low')">&#128994; Basse</div>
     </div>
   </div>
-</div>
+  <div class="fg"><label>Personnes suggérées</label><div class="psl" id="tdPp"></div></div>
+  <div class="fax"><button class="bcnl" onclick="cm('mTd')">Annuler</button><button class="bsav" onclick="saveTodo()">Enregistrer</button></div>
+</div></div>
 
-<!-- MODAL À FAIRE -->
-<div class="mbd" id="mTd">
-  <div class="modal">
-    <div class="mhandle"></div>
-    <div class="mtitle"><span id="mTdTxt">Nouvelle tâche à faire</span><button class="mclose" onclick="cm('mTd')">✕</button></div>
-    <div class="fg"><label>Titre</label><input type="text" id="tdT" placeholder="Que faut-il faire ?"></div>
-    <div class="fg"><label>Description</label><textarea id="tdD" placeholder="Détails (optionnel)…"></textarea></div>
-    <div class="fg">
-      <label>Priorité</label>
-      <div class="prsel">
-        <div class="propt ph" id="prH" onclick="selPrio('high')">🔴 Haute</div>
-        <div class="propt pm active" id="prM" onclick="selPrio('medium')">🟡 Moyenne</div>
-        <div class="propt pl" id="prL" onclick="selPrio('low')">🟢 Basse</div>
-      </div>
-    </div>
-    <div class="fg"><label>Personnes suggérées</label><div class="psl" id="tdPp"></div></div>
-    <div class="fax"><button class="bcnl" onclick="cm('mTd')">Annuler</button><button class="bsav" onclick="saveTodo()">Enregistrer</button></div>
-  </div>
-</div>
-
-<!-- MODAL BACKEND -->
-<div class="mbd" id="mBk">
-  <div class="modal">
-    <div class="mhandle"></div>
-    <div class="mtitle">Configuration Google Sheets<button class="mclose" onclick="cm('mBk')">✕</button></div>
-    <p style="color:var(--tm);font-size:0.83rem;margin-bottom:13px;line-height:1.6;">Collez l'URL de votre Apps Script pour synchroniser entre utilisateurs (voir README).</p>
-    <div class="fg"><label>URL Apps Script</label><input type="text" id="cfgU" placeholder="https://script.google.com/macros/s/.../exec"></div>
-    <div class="fg"><label>Mon prénom</label><input type="text" id="cfgN" placeholder="Ex : Marie"></div>
-    <div class="fax"><button class="bcnl" onclick="cm('mBk')">Annuler</button><button class="bsav" onclick="saveCfg()">Enregistrer</button></div>
-  </div>
-</div>
+<!-- MODAL CONFIG -->
+<div class="mbd" id="mCfg"><div class="modal">
+  <div class="mhandle"></div>
+  <div class="mtitle">Paramètres<button class="mclose" onclick="cm('mCfg')">&#10005;</button></div>
+  <p style="color:var(--tm);font-size:0.83rem;margin-bottom:13px;line-height:1.6;">Collez l'URL de votre Google Apps Script pour synchroniser entre appareils.</p>
+  <div class="fg"><label>URL Apps Script</label><input type="text" id="cfgU" placeholder="https://script.google.com/macros/s/.../exec"></div>
+  <div class="fg"><label>Mon prénom</label><input type="text" id="cfgN" placeholder="Ex : Kevin"></div>
+  <div class="fax"><button class="bcnl" onclick="cm('mCfg')">Annuler</button><button class="bsav" onclick="saveCfg()">Enregistrer</button></div>
+</div></div>
 
 <script>
-// ═════════════════════════════════════════════
-//  DATA
-// ═════════════════════════════════════════════
-const PERSONS=[
-  {id:'p1',name:'Kevin',   ini:'KB',color:'#7c6aff'},
-  {id:'p2',name:'Antony',  ini:'AR',color:'#ff6a8a'},
-  {id:'p3',name:'Thibaud',   ini:'TM',color:'#6affd4'},
-  {id:'p4',name:'', ini:'',color:'#ffb86a'},
-  {id:'p5',name:'',  ini:'',color:'#6ab8ff'},
+// ══════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════
+const PERSONS = [
+  {id:'p1', name:'Kevin',  ini:'KB', color:'#7c6aff'},
+  {id:'p2', name:'Antony', ini:'AR', color:'#ff6a8a'},
+  {id:'p3', name:'Thibaud',ini:'TM', color:'#6affd4'},
 ];
-const COLORS=['#7c6aff','#ff6a8a','#6affd4','#ffb86a','#6ab8ff','#ff9f6a','#c46aff'];
-const CATS={meeting:'Réunion',task:'Tâche',deadline:'Deadline',other:'Autre'};
-const CATCOL={meeting:'#7c6aff',task:'#6affd4',deadline:'#ff6a8a',other:'#ffb86a'};
+const COLORS = ['#7c6aff','#ff6a8a','#6affd4','#ffb86a','#6ab8ff','#ff9f6a','#c46aff'];
+const CATS   = {meeting:'Réunion', task:'Tâche', deadline:'Deadline', other:'Autre'};
+const CATCOL = {meeting:'#7c6aff', task:'#6affd4', deadline:'#ff6a8a', other:'#ffb86a'};
+const HOUR_START = 6; // Journée commence à 6h
 
-let events=JSON.parse(localStorage.getItem('ev_events')||'[]');
-let todos=JSON.parse(localStorage.getItem('ev_todos')||'[]');
-let deletedIds=new Set(JSON.parse(localStorage.getItem('ev_deleted')||'[]'));
-let view='week';
-let cd=new Date();
-let fp=[];
-let editEvId=null,editTdId=null;
-let selColor=COLORS[0];
-let selPpEv=[],selPpTd=[];
-let selPrio='medium';
-let tdFilter='all';
-let backUrl=localStorage.getItem('ev_backend')||'';
-let curUser=localStorage.getItem('ev_user')||'';
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+let events  = JSON.parse(localStorage.getItem('ev_ev')  || '[]');
+let todos   = JSON.parse(localStorage.getItem('ev_td')  || '[]');
+// deletedIds : Set des IDs supprimés localement (persiste entre sessions)
+let deletedIds = new Set(JSON.parse(localStorage.getItem('ev_del') || '[]'));
 
-// Seed
-if(!events.length){
-  const t=new Date();
-  const fd=n=>{const x=new Date(t);x.setDate(x.getDate()+n);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
-  events=[
-    {id:'e1',title:'Réunion équipe',desc:'Point hebdomadaire',date:fd(0),start:'09:00',end:'10:00',color:'#7c6aff',cat:'meeting',persons:['p1','p2','p3'],createdBy:'Marie'},
-    {id:'e2',title:'Rapport mensuel',desc:'Finalisation Q2',date:fd(1),start:'14:00',end:'16:00',color:'#ff6a8a',cat:'deadline',persons:['p2','p4'],createdBy:'Thomas'},
-    {id:'e3',title:'Formation SAV',desc:'',date:fd(2),start:'10:00',end:'12:00',color:'#6affd4',cat:'task',persons:['p1','p5'],createdBy:'Marie'},
-    {id:'e4',title:'Appel client Dupont',desc:'',date:fd(0),start:'11:00',end:'11:30',color:'#ffb86a',cat:'meeting',persons:['p3'],createdBy:'Leïla'},
-  ];
-  saveEv();
-}
-if(!todos.length){
-  todos=[
-    {id:'td1',title:'Commander pièces de rechange',desc:'Fournisseur pour machines en attente',priority:'high',persons:[],claimedBy:[],done:false,createdBy:'Admin',createdAt:new Date().toISOString()},
-    {id:'td2',title:'Mettre à jour le logiciel SAV',desc:'Version 3.2 disponible',priority:'medium',persons:['p4','p5'],claimedBy:['p4'],done:false,createdBy:'Antoine',createdAt:new Date().toISOString()},
-    {id:'td3',title:'Nettoyer les postes de travail',desc:'',priority:'low',persons:[],claimedBy:['p1'],done:true,createdBy:'Marie',createdAt:new Date().toISOString()},
-  ];
-  saveTd();
-}
+let view    = 'week';
+let cd      = new Date();
+let fp      = []; // filter persons
+let selColor = COLORS[0];
+let selPpEv = [], selPpTd = [];
+let selPrio = 'medium';
+let tdFilter = 'all';
+let detEvId = null, editEvId = null, editTdId = null;
+let backUrl  = localStorage.getItem('ev_url')  || '';
+let curUser  = localStorage.getItem('ev_user') || '';
 
-function saveEv(){localStorage.setItem('ev_events',JSON.stringify(events));syncAll();}
-function saveTd(){localStorage.setItem('ev_todos',JSON.stringify(todos));syncAll();}
+// ══════════════════════════════════════════════════════
+//  PERSISTANCE
+// ══════════════════════════════════════════════════════
+function saveEvLocal()  { localStorage.setItem('ev_ev',  JSON.stringify(events)); }
+function saveTdLocal()  { localStorage.setItem('ev_td',  JSON.stringify(todos));  }
+function saveDelLocal() { localStorage.setItem('ev_del', JSON.stringify([...deletedIds])); }
 
-function syncAll(){
+// ══════════════════════════════════════════════════════
+//  SYNC GOOGLE SHEETS — stratégie simple et fiable
+//  Le Sheet est la source de vérité partagée.
+//  On envoie TOUT à chaque modification, et on recharge TOUT toutes les 30s.
+//  Les deletedIds sont envoyés avec chaque payload pour que le Sheet
+//  retire les items supprimés et ne les renvoie plus.
+// ══════════════════════════════════════════════════════
+
+let syncBusy = false;
+let syncTimer = null;
+
+function scheduleSync() {
   if (!backUrl) return;
-  // Annule le timer en attente et programme un nouvel envoi dans 1s
-  // (debounce : évite d'envoyer à chaque frappe)
-  if (_syncTimer) clearTimeout(_syncTimer);
-  _syncTimer = setTimeout(() => doSync(), 1000);
+  if (syncTimer) clearTimeout(syncTimer);
+  // Debounce 800ms pour éviter d'envoyer à chaque frappe
+  syncTimer = setTimeout(doSync, 800);
 }
 
-function doSync(){
-  if (!backUrl) return;
-  _syncPending = true;
-  _lastSync = Date.now();
-  // Inclut les IDs supprimés pour que le Sheet les retire aussi
-  const payload = encodeURIComponent(JSON.stringify({events, todos, deleted:[...deletedIds]}));
-  const cb = '_sync' + Date.now();
-  window[cb] = (r) => {
-    delete window[cb];
-    _syncPending = false;
-    _lastSync = Date.now();
-  };
+function doSync() {
+  if (!backUrl || syncBusy) return;
+  syncBusy = true;
+  const payload = encodeURIComponent(JSON.stringify({
+    events:  events,
+    todos:   todos,
+    deleted: [...deletedIds]
+  }));
+  const cb = '_s' + Date.now();
+  window[cb] = () => { delete window[cb]; syncBusy = false; };
   const s = document.createElement('script');
   s.src = backUrl + '?action=setAll&data=' + payload + '&callback=' + cb + '&t=' + Date.now();
-  s.onerror = () => { delete window[cb]; _syncPending = false; };
+  s.onerror = () => { delete window[cb]; syncBusy = false; };
   document.head.appendChild(s);
-  // Timeout de sécurité : libère le verrou après 12s même si pas de réponse
-  setTimeout(() => {
-    _syncPending = false;
-    try { document.head.removeChild(s); } catch(e){}
-  }, 12000);
-}
-let _syncPending = false;
-let _lastSync = 0;
-let _syncTimer = null;
-
-// Fusionne les données du Sheet avec le local — le local est toujours prioritaire
-function mergeData(local, remote) {
-  if (!remote || remote.length === 0) return local;
-  const localIds = new Set(local.map(x => x.id));
-  // Ajoute uniquement les items du Sheet qui n'existent pas en local
-  const remoteOnly = remote.filter(x => !localIds.has(x.id));
-  return [...local, ...remoteOnly];
+  // Libère le verrou au bout de 15s même sans réponse
+  setTimeout(() => { syncBusy = false; try{document.head.removeChild(s);}catch(e){} }, 15000);
 }
 
-async function loadBackend(){
-  if (_syncPending) return;  // Pas de rechargement si une sauvegarde est en cours
-  if (!backUrl) return;
+async function loadFromSheet() {
+  if (!backUrl || syncBusy) return;
   try {
     const data = await new Promise((res, rej) => {
-      const cb = '_cb' + Date.now();
+      const cb = '_l' + Date.now();
       window[cb] = d => { delete window[cb]; res(d); };
       const s = document.createElement('script');
       s.src = backUrl + '?action=getAll&callback=' + cb + '&t=' + Date.now();
-      s.onerror = () => { delete window[cb]; rej('error'); };
+      s.onerror = () => { delete window[cb]; rej(); };
       document.head.appendChild(s);
       setTimeout(() => { delete window[cb]; rej('timeout'); }, 10000);
     });
-
     if (!data) return;
 
     let changed = false;
 
-    // EVENTS : fusionne Sheet + local, le local gagne en cas de conflit d'ID
+    // Intègre les deletedIds reçus du Sheet (suppressions faites sur d'autres appareils)
+    if (data.deleted && data.deleted.length > 0) {
+      data.deleted.forEach(id => deletedIds.add(String(id)));
+      saveDelLocal();
+    }
+
+    // EVENTS : prend les données du Sheet, retire les supprimés
     if (data.events && Array.isArray(data.events)) {
-      const localIds = new Set(events.map(e => e.id));
-      // Items du Sheet absents en local = nouveaux depuis un autre appareil
-      // Applique les suppressions faites sur d'autres appareils
-      if (data.deleted && Array.isArray(data.deleted)) {
-        data.deleted.forEach(id => {
-          if (!deletedIds.has(id)) {
-            deletedIds.add(id);
-            events = events.filter(e => e.id !== id);
-            todos = todos.filter(t => t.id !== id);
-          }
-        });
-        localStorage.setItem('ev_deleted', JSON.stringify([...deletedIds]));
-        localStorage.setItem('ev_events', JSON.stringify(events));
-        localStorage.setItem('ev_todos', JSON.stringify(todos));
-      }
-      const newFromSheet = data.events.filter(e => e.id && !localIds.has(e.id) && !deletedIds.has(e.id));
-      if (newFromSheet.length > 0) {
-        events = [...events, ...newFromSheet];
-        localStorage.setItem('ev_events', JSON.stringify(events));
+      const fromSheet = data.events.filter(e => e.id && !deletedIds.has(String(e.id)));
+      // Fusionne : pour chaque event, prend la version la plus récente (updatedAt)
+      const merged = mergeByUpdatedAt(events, fromSheet);
+      if (JSON.stringify(merged) !== JSON.stringify(events)) {
+        events = merged;
+        saveEvLocal();
         changed = true;
       }
-      // Met aussi à jour les events locaux modifiés sur un autre appareil
-      // (compare updatedAt)
-      const sheetById = {};
-      data.events.forEach(e => { if(e.id) sheetById[e.id] = e; });
-      events = events.map(local => {
-        const remote = sheetById[local.id];
-        if (!remote) return local;
-        // Si le remote est plus récent, on le prend
-        if (remote.updatedAt && local.updatedAt && remote.updatedAt > local.updatedAt) {
-          changed = true;
-          return remote;
-        }
-        return local;
-      });
-      if (changed) localStorage.setItem('ev_events', JSON.stringify(events));
     }
 
     // TODOS : même logique
     if (data.todos && Array.isArray(data.todos)) {
-      const localIds = new Set(todos.map(t => t.id));
-      const newFromSheet = data.todos.filter(t => t.id && !localIds.has(t.id) && !deletedIds.has(t.id));
-      if (newFromSheet.length > 0) {
-        todos = [...todos, ...newFromSheet];
-        localStorage.setItem('ev_todos', JSON.stringify(todos));
-        changed = true;
-      }
-      // Sync statut done depuis autre appareil
+      const fromSheet = data.todos.filter(t => t.id && !deletedIds.has(String(t.id)));
       const sheetById = {};
-      data.todos.forEach(t => { if(t.id) sheetById[t.id] = t; });
+      fromSheet.forEach(t => sheetById[t.id] = t);
+      const localIds = new Set(todos.map(t => t.id));
+      // Nouveaux depuis d'autres appareils
+      const newItems = fromSheet.filter(t => !localIds.has(t.id));
+      // Met à jour done/claimedBy depuis le Sheet
+      let tdChanged = newItems.length > 0;
       todos = todos.map(local => {
         const remote = sheetById[local.id];
         if (!remote) return local;
-        // Sync done + claimedBy depuis le Sheet
         if (remote.done !== local.done || JSON.stringify(remote.claimedBy) !== JSON.stringify(local.claimedBy)) {
-          changed = true;
-          return { ...local, done: remote.done, claimedBy: remote.claimedBy };
+          tdChanged = true;
+          return {...local, done: remote.done, claimedBy: remote.claimedBy};
         }
         return local;
       });
-      if (changed) localStorage.setItem('ev_todos', JSON.stringify(todos));
+      if (newItems.length > 0) todos = [...todos, ...newItems];
+      if (tdChanged) { saveTdLocal(); changed = true; }
     }
 
     if (changed) render();
 
-  } catch(e) {
-    // Silencieux - pas de connexion ou timeout
-  }
+  } catch(e) { /* silencieux */ }
 }
 
-// ═════════════════════════════════════════════
-//  HELPERS
-// ═════════════════════════════════════════════
-const uid=()=>'i'+Date.now()+Math.random().toString(36).slice(2,5);
-const fd=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
-const pd=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
-const isT=d=>{const t=new Date();return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate();};
-const gp=id=>PERSONS.find(p=>p.id===id);
-function mon(date){const d=new Date(date),day=d.getDay();d.setDate(d.getDate()+(day===0?-6:1-day));d.setHours(0,0,0,0);return d;}
-function fEv(){if(!fp.length)return events;return events.filter(e=>e.persons&&e.persons.some(p=>fp.includes(p)));}
-function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400);}
-function cm(id){document.getElementById(id).classList.remove('open');}
+// Fusionne deux listes d'events en gardant la version la plus récente par ID
+function mergeByUpdatedAt(local, remote) {
+  const map = {};
+  // D'abord les locaux
+  local.forEach(e => map[e.id] = e);
+  // Ensuite les distants — écrase si plus récent
+  remote.forEach(e => {
+    if (!map[e.id]) {
+      map[e.id] = e;
+    } else {
+      const la = map[e.id].updatedAt || '';
+      const ra = e.updatedAt || '';
+      if (ra > la) map[e.id] = e;
+    }
+  });
+  return Object.values(map).filter(e => !deletedIds.has(String(e.id)));
+}
 
-// ═════════════════════════════════════════════
-//  VIEW
-// ═════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+const uid  = () => 'e' + Date.now() + Math.random().toString(36).slice(2,5);
+const fd   = d  => { const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); };
+const pd   = s  => { const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); };
+const isT  = d  => { const t=new Date(); return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate(); };
+const gp   = id => PERSONS.find(p=>p.id===id);
+function monday(date){ const d=new Date(date),day=d.getDay(); d.setDate(d.getDate()+(day===0?-6:1-day)); d.setHours(0,0,0,0); return d; }
+function fEv(){ if(!fp.length)return events; return events.filter(e=>e.persons&&e.persons.some(p=>fp.includes(p))); }
+function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2400); }
+function cm(id){ document.getElementById(id).classList.remove('open'); }
+
+// Hauteur par heure selon vue
+const H_WEEK = 48;
+const H_DAY  = 60;
+
+// ══════════════════════════════════════════════════════
+//  VUES
+// ══════════════════════════════════════════════════════
 function setView(v){
   view=v;
   document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('active'));
-  const hb=document.getElementById('btn-'+v);if(hb)hb.classList.add('active');
+  const hb=document.getElementById('btn-'+v); if(hb) hb.classList.add('active');
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('active'));
-  const bb=document.getElementById('bnav-'+v);if(bb)bb.classList.add('active');
-  document.getElementById('calNav').style.display=v==='todo'?'none':'';
-  document.getElementById('hAddTxt').textContent=v==='todo'?'À faire':'Nouveau';
+  const bb=document.getElementById('bnav-'+v); if(bb) bb.classList.add('active');
+  document.getElementById('calNav').style.display = v==='todo'?'none':'';
+  document.getElementById('hAddTxt').textContent  = v==='todo'?'À faire':'Nouveau';
   render();
 }
 function navigate(dir){
-  if(view==='day')cd.setDate(cd.getDate()+dir);
-  else if(view==='week')cd.setDate(cd.getDate()+dir*7);
+  if(view==='day')    cd.setDate(cd.getDate()+dir);
+  else if(view==='week') cd.setDate(cd.getDate()+dir*7);
   else cd.setMonth(cd.getMonth()+dir);
   render();
 }
-function goToday(){cd=new Date();render();}
-function onAddClick(){view==='todo'?openTodoModal():openEvModal();}
+function goToday(){ cd=new Date(); render(); }
+function onAdd(){ view==='todo'?openTodoModal():openEvModal(); }
 
-// ═════════════════════════════════════════════
-//  RENDER
-// ═════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  RENDER PRINCIPAL
+// ══════════════════════════════════════════════════════
 function render(){
   const pt=document.getElementById('periodTxt');
-  if(view==='day') pt.textContent=cd.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  else if(view==='week'){const m=mon(cd);const s=new Date(m);s.setDate(s.getDate()+6);pt.textContent=m.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' — '+s.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});}
+  if(view==='day')       pt.textContent=cd.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  else if(view==='week'){
+    const m=monday(cd), s=new Date(m); s.setDate(s.getDate()+6);
+    pt.textContent=m.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' — '+s.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'});
+  }
   else if(view==='month') pt.textContent=cd.toLocaleDateString('fr-FR',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
   rMiniCal(); rFilter(); rLegend();
   const c=document.getElementById('calContent');
-  if(view==='month')rMonth(c);
-  else if(view==='week')rWeek(c);
-  else if(view==='day')rDay(c);
-  else rTodo(c);
+  if(view==='month')     rMonth(c);
+  else if(view==='week') rWeek(c);
+  else if(view==='day')  rDay(c);
+  else                   rTodo(c);
 }
 
-// Mini cal
+// ── Mini calendrier ────────────────────────────────────
 function rMiniCal(){
   const mc=document.getElementById('miniCal');
   const y=cd.getFullYear(),m=cd.getMonth();
   const fi=new Date(y,m,1),la=new Date(y,m+1,0);
   const sd=(fi.getDay()+6)%7;
   const mn=fi.toLocaleDateString('fr-FR',{month:'long'}).replace(/^\w/,c=>c.toUpperCase());
-  let h=`<div class="mc-head"><button onclick="miniN(-1)">◀</button><span class="mc-month">${mn}</span><button onclick="miniN(1)">▶</button></div>
+  let h=`<div class="mc-head"><button onclick="miniN(-1)">&#9664;</button><span class="mc-month">${mn}</span><button onclick="miniN(1)">&#9654;</button></div>
   <div class="mc-grid"><div class="dn">L</div><div class="dn">M</div><div class="dn">M</div><div class="dn">J</div><div class="dn">V</div><div class="dn">S</div><div class="dn">D</div>`;
   for(let i=0;i<sd;i++) h+=`<div class="dc om"></div>`;
   for(let d=1;d<=la.getDate();d++){const dd=new Date(y,m,d);h+=`<div class="dc${isT(dd)?' today':''}" onclick="jd(${y},${m},${d})">${d}</div>`;}
   h+='</div>'; mc.innerHTML=h;
 }
-function miniN(dir){cd.setMonth(cd.getMonth()+dir);render();}
-function jd(y,m,d){cd=new Date(y,m,d);setView('day');}
+function miniN(dir){ cd.setMonth(cd.getMonth()+dir); render(); }
+function jd(y,m,d){ cd=new Date(y,m,d); setView('day'); }
 
-// Filter
+// ── Filtres ────────────────────────────────────────────
 function rFilter(){
   const fl=document.getElementById('filterList');
-  fl.innerHTML=`<button class="fa${!fp.length?' active':''}" onclick="faAll()">👥 Toutes</button>`;
+  fl.innerHTML=`<button class="fa${!fp.length?' active':''}" onclick="faAll()">&#128101; Toutes</button>`;
   PERSONS.forEach(p=>{
     const a=fp.includes(p.id);
-    fl.innerHTML+=`<div class="pch${a?' active':''}" onclick="fToggle('${p.id}')"><div class="pav" style="background:${p.color}22;color:${p.color}">${p.ini}</div><span class="pnm">${p.name}</span><div class="pck">${a?'✓':''}</div></div>`;
+    fl.innerHTML+=`<div class="pch${a?' active':''}" onclick="fTog('${p.id}')"><div class="pav" style="background:${p.color}22;color:${p.color}">${p.ini}</div><span class="pnm">${p.name}</span><div class="pck">${a?'&#10003;':''}</div></div>`;
   });
 }
-function faAll(){fp=[];render();}
-function fToggle(id){fp.includes(id)?fp=fp.filter(x=>x!==id):fp.push(id);render();}
+function faAll(){ fp=[]; updateBadge(); render(); renderFilterDrawer(); }
+function fTog(id){ fp.includes(id)?fp=fp.filter(x=>x!==id):fp.push(id); updateBadge(); render(); renderFilterDrawer(); }
+function updateBadge(){ const b=document.getElementById('fbadge'); if(b) b.classList.toggle('show',fp.length>0); }
 
 function rLegend(){
   document.getElementById('legendList').innerHTML=Object.entries(CATS).map(([k,v])=>
-    `<div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:3px;background:${CATCOL[k]};flex-shrink:0"></div><span style="color:var(--tm)">${v}</span></div>`
+    `<div class="leg-item"><div class="leg-dot" style="background:${CATCOL[k]}"></div>${v}</div>`
   ).join('');
 }
 
-// ── MONTH ─────────────────────────────────
+// ── Filter Drawer ──────────────────────────────────────
+function openFilter(){ renderFilterDrawer(); document.getElementById('fbd').classList.add('open'); document.getElementById('fdw').classList.add('open'); }
+function closeFilter(){ document.getElementById('fbd').classList.remove('open'); document.getElementById('fdw').classList.remove('open'); }
+function renderFilterDrawer(){
+  const el=document.getElementById('fdwList');
+  el.innerHTML=`<div class="fdw-all${!fp.length?' active':''}" onclick="faAll()">&#128101; Toutes les personnes</div>`;
+  PERSONS.forEach(p=>{
+    const a=fp.includes(p.id);
+    el.innerHTML+=`<div class="fdw-chip${a?' active':''}" onclick="fTog('${p.id}')">
+      <div class="fdw-av" style="background:${p.color}22;color:${p.color}">${p.ini}</div>
+      <span class="fdw-name">${p.name}</span>
+      <div class="fdw-ck">${a?'&#10003;':''}</div>
+    </div>`;
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  VUE MOIS
+// ══════════════════════════════════════════════════════
 function rMonth(c){
   const y=cd.getFullYear(),m=cd.getMonth();
   const fi=new Date(y,m,1),la=new Date(y,m+1,0);
@@ -679,96 +656,111 @@ function rMonth(c){
   const pl=new Date(y,m,0);
   for(let i=sd-1;i>=0;i--) h+=`<div class="mc om"><div class="dn2">${pl.getDate()-i}</div></div>`;
   for(let d=1;d<=la.getDate();d++){
-    const dd=new Date(y,m,d);const ds=fd(dd);
+    const dd=new Date(y,m,d); const ds=fd(dd);
     const de=fe.filter(e=>e.date===ds);
     h+=`<div class="mc${isT(dd)?' today':''}" onclick="jd(${y},${m},${d})"><div class="dn2">${d}</div>`;
-    de.slice(0,3).forEach(e=>h+=`<div class="tp" style="background:${e.color}33;color:${e.color}" onclick="event.stopPropagation();showDt('${e.id}')"><div class="d"></div>${e.title}</div>`);
-    if(de.length>3) h+=`<div class="mt">+${de.length-3}</div>`;
+    de.slice(0,3).forEach(e=>h+=`<div class="tp" style="background:${e.color}33;color:${e.color}" onclick="event.stopPropagation();showDt('${e.id}')"><div class="tp-dot"></div>${e.title}</div>`);
+    if(de.length>3) h+=`<div class="more-t">+${de.length-3}</div>`;
     h+='</div>';
   }
-  const tot=sd+la.getDate();const rem=(7-tot%7)%7;
+  const rem=(7-(sd+la.getDate())%7)%7;
   for(let d=1;d<=rem;d++) h+=`<div class="mc om"><div class="dn2">${d}</div></div>`;
   h+='</div></div>'; c.innerHTML=h;
 }
 
-// ── WEEK ─────────────────────────────────
+// ══════════════════════════════════════════════════════
+//  VUE SEMAINE
+// ══════════════════════════════════════════════════════
 function rWeek(c){
-  const m=mon(cd);
-  const days=Array.from({length:7},(_,i)=>{const d=new Date(m);d.setDate(d.getDate()+i);return d;});
+  const mon=monday(cd);
+  const days=Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(d.getDate()+i);return d;});
   const fe=fEv();
   const dn=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-  const hr=Array.from({length:24},(_,i)=>i);
-  let h=`<div class="wv"><div class="wkh"><div></div>${days.map((d,i)=>`<div class="wkd${isT(d)?' today':''}"><div class="wd">${dn[i]}</div><div class="wn">${d.getDate()}</div></div>`).join('')}</div>
-  <div class="wb"><div class="wtc">${hr.map(h=>`<div class="wts">${String(h).padStart(2,'0')}h</div>`).join('')}</div>
-  <div class="wdg">${days.map(d=>{
-    const ds=fd(d);const de=fe.filter(e=>e.date===ds);
-    const li=hr.map(()=>'<div class="whl"></div>').join('');
-    const bl=de.map(e=>{
-      const[sh,sm]=e.start.split(':').map(Number);const[eh,em]=e.end.split(':').map(Number);
-      const top=(sh*60+sm)*(50/60);const ht=((eh*60+em)-(sh*60+sm))*(50/60);
-      return `<div class="wtb" style="background:${e.color}33;color:${e.color};border-left:3px solid ${e.color};top:${top}px;height:${Math.max(ht,20)}px" onclick="showDt('${e.id}')"><div class="wtt">${e.title}</div><div class="wtm">${e.start}–${e.end}</div></div>`;
-    }).join('');
-    return `<div class="wdc" ondblclick="openEvModal('${ds}')">${li}${bl}</div>`;
-  }).join('')}</div></div></div>`;
+  const hours=Array.from({length:24-HOUR_START},(_,i)=>i+HOUR_START);
+  let h=`<div class="wv">
+    <div class="wkh"><div></div>${days.map((d,i)=>`<div class="wkd${isT(d)?' today':''}"><div class="wd">${dn[i]}</div><div class="wn">${d.getDate()}</div></div>`).join('')}</div>
+    <div class="wb">
+      <div class="wtc">${hours.map(h=>`<div class="wts">${String(h).padStart(2,'0')}h</div>`).join('')}</div>
+      <div class="wdg">${days.map(d=>{
+        const ds=fd(d); const de=fe.filter(e=>e.date===ds);
+        const lines=hours.map(()=>'<div class="whl"></div>').join('');
+        const blocks=de.map(e=>{
+          const [sh,sm]=e.start.split(':').map(Number);
+          const [eh,em]=e.end.split(':').map(Number);
+          const top=(sh-HOUR_START)*H_WEEK+(sm/60)*H_WEEK;
+          const ht=((eh*60+em)-(sh*60+sm))/60*H_WEEK;
+          return `<div class="wtb" style="background:${e.color}33;color:${e.color};border-left:3px solid ${e.color};top:${top}px;height:${Math.max(ht,20)}px" onclick="showDt('${e.id}')"><div class="wtt">${e.title}</div><div class="wtm">${e.start}–${e.end}</div></div>`;
+        }).join('');
+        return `<div class="wdc" ondblclick="openEvModal('${ds}')">${lines}${blocks}</div>`;
+      }).join('')}
+      </div>
+    </div>
+  </div>`;
   c.innerHTML=h;
 }
 
-// ── DAY ─────────────────────────────────
+// ══════════════════════════════════════════════════════
+//  VUE JOUR
+// ══════════════════════════════════════════════════════
 function rDay(c){
-  const ds=fd(cd);const fe=fEv().filter(e=>e.date===ds);
-  const hr=Array.from({length:24},(_,i)=>i);
+  const ds=fd(cd); const fe=fEv().filter(e=>e.date===ds);
+  const hours=Array.from({length:24-HOUR_START},(_,i)=>i+HOUR_START);
   let h=`<div class="dv"><div class="db">
-  <div class="dtc">${hr.map(h=>`<div class="dts">${String(h).padStart(2,'0')}h</div>`).join('')}</div>
-  <div class="dec" ondblclick="openEvModal('${ds}')">
-    ${hr.map(()=>'<div class="dhl"></div>').join('')}
-    ${fe.map(e=>{
-      const[sh,sm]=e.start.split(':').map(Number);const[eh,em]=e.end.split(':').map(Number);
-      const top=(sh*60+sm)*(62/60);const ht=((eh*60+em)-(sh*60+sm))*(62/60);
-      const ppl=(e.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dav" style="background:${p.color}33;color:${p.color}">${p.ini}</div>`:''}).join('');
-      return `<div class="dtb" style="background:${e.color}22;border-left:4px solid ${e.color};top:${top}px;height:${Math.max(ht,30)}px" onclick="showDt('${e.id}')">
-        <div class="dti" style="color:${e.color}">${e.title}</div>
-        <div class="dtm" style="color:${e.color}">${e.start}–${e.end}</div>
-        <div class="dpp">${ppl}</div></div>`;
-    }).join('')}
-  </div></div></div>`;
+    <div class="dtc">${hours.map(h=>`<div class="dts">${String(h).padStart(2,'0')}h</div>`).join('')}</div>
+    <div class="dec" ondblclick="openEvModal('${ds}')">
+      ${hours.map(()=>'<div class="dhl"></div>').join('')}
+      ${fe.map(e=>{
+        const [sh,sm]=e.start.split(':').map(Number);
+        const [eh,em]=e.end.split(':').map(Number);
+        const top=(sh-HOUR_START)*H_DAY+(sm/60)*H_DAY;
+        const ht=((eh*60+em)-(sh*60+sm))/60*H_DAY;
+        const ppl=(e.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dav" style="background:${p.color}33;color:${p.color}">${p.ini}</div>`:''}).join('');
+        return `<div class="dtb" style="background:${e.color}22;border-left:4px solid ${e.color};top:${top}px;height:${Math.max(ht,30)}px" onclick="showDt('${e.id}')">
+          <div class="dti" style="color:${e.color}">${e.title}</div>
+          <div class="dtm" style="color:${e.color}">${e.start}–${e.end}</div>
+          <div class="dpp">${ppl}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div></div>`;
   c.innerHTML=h;
 }
 
-// ── TODO ─────────────────────────────────
+// ══════════════════════════════════════════════════════
+//  VUE À FAIRE
+// ══════════════════════════════════════════════════════
 function rTodo(c){
   let f=todos;
-  if(tdFilter==='done') f=todos.filter(t=>t.done);
+  if(tdFilter==='done')   f=todos.filter(t=>t.done);
   else if(tdFilter==='todo') f=todos.filter(t=>!t.done);
   else if(tdFilter==='mine'&&curUser){
     const mp=PERSONS.find(p=>p.name.toLowerCase()===curUser.toLowerCase());
     if(mp) f=todos.filter(t=>t.claimedBy&&t.claimedBy.includes(mp.id));
   }
   if(fp.length) f=f.filter(t=>(t.persons&&t.persons.some(p=>fp.includes(p)))||(t.claimedBy&&t.claimedBy.some(p=>fp.includes(p))));
-  const pen=f.filter(t=>!t.done);const don=f.filter(t=>t.done);
-
+  const pen=f.filter(t=>!t.done), don=f.filter(t=>t.done);
   let h=`<div class="tv"><div class="ttb">
     <button class="tfbtn${tdFilter==='all'?' active':''}" onclick="setTF('all')">Toutes</button>
     <button class="tfbtn${tdFilter==='todo'?' active':''}" onclick="setTF('todo')">À faire</button>
     <button class="tfbtn${tdFilter==='done'?' active':''}" onclick="setTF('done')">Terminées</button>
     ${curUser?`<button class="tfbtn${tdFilter==='mine'?' active':''}" onclick="setTF('mine')">Les miennes</button>`:''}
   </div>`;
-
-  if(!pen.length&&!don.length) h+=`<div class="t-empty"><div class="t-empty-i">🎉</div>Aucune tâche ici</div>`;
-  if(pen.length) h+=`<div><div class="tsec">À faire <span class="tcnt">${pen.length}</span></div><div class="tlist" style="margin-top:9px">${pen.map(tdCard).join('')}</div></div>`;
-  if(don.length) h+=`<div><div class="tsec">Terminées <span class="tcnt">${don.length}</span></div><div class="tlist" style="margin-top:9px">${don.map(tdCard).join('')}</div></div>`;
+  if(!pen.length&&!don.length) h+=`<div class="t-empty"><div class="t-empty-i">&#127881;</div>Aucune tâche ici</div>`;
+  if(pen.length) h+=`<div><div class="tsec">À faire <span class="tcnt">${pen.length}</span></div><div class="tlist">${pen.map(tdCard).join('')}</div></div>`;
+  if(don.length) h+=`<div><div class="tsec">Terminées <span class="tcnt">${don.length}</span></div><div class="tlist">${don.map(tdCard).join('')}</div></div>`;
   h+='</div>'; c.innerHTML=h;
 }
-function setTF(f){tdFilter=f;render();}
+function setTF(f){ tdFilter=f; render(); }
 
 function tdCard(t){
-  const pl={high:'🔴 Haute',medium:'🟡 Moyenne',low:'🟢 Basse'};
-  const pc={high:'ph',medium:'pm',low:'pl'};
+  const pl={high:'&#128308; Haute',medium:'&#127937; Moyenne',low:'&#128994; Basse'};
+  const pc={high:'ph',medium:'pm',low:'pl2'};
   const mp=PERSONS.find(p=>p.name.toLowerCase()===(curUser||'').toLowerCase());
   const claimed=mp&&t.claimedBy&&t.claimedBy.includes(mp.id);
   const avs=(t.claimedBy||[]).map(pid=>{const p=gp(pid);return p?`<div class="tav" style="background:${p.color}33;color:${p.color};border-color:${p.color}44">${p.ini}</div>`:''}).join('');
-  const cb=!t.done&&curUser?(claimed?`<span class="tclaimed">✓ Je m'en occupe</span>`:`<button class="tclaim" onclick="event.stopPropagation();claimTd('${t.id}')">Je prends</button>`):'';
+  const cb=!t.done&&curUser?(claimed?`<span class="tclaimed">&#10003; Je m'en occupe</span>`:`<button class="tclaim" onclick="event.stopPropagation();claimTd('${t.id}')">Je prends</button>`):'';
   return `<div class="tc${t.done?' done':''}" onclick="openTdEdit('${t.id}')">
-    <div class="tchk" onclick="event.stopPropagation();toggleDone('${t.id}')">${t.done?'✓':''}</div>
+    <div class="tchk" onclick="event.stopPropagation();toggleDone('${t.id}')">${t.done?'&#10003;':''}</div>
     <div class="tb">
       <div class="tct">${t.title}</div>
       ${t.desc?`<div class="tcd">${t.desc}</div>`:''}
@@ -778,35 +770,34 @@ function tdCard(t){
         ${cb}
       </div>
     </div>
-    <div class="tact"><button class="tdel" onclick="event.stopPropagation();delTd('${t.id}')">✕</button></div>
+    <button class="tdel" onclick="event.stopPropagation();delTd('${t.id}')">&#10005;</button>
   </div>`;
 }
 
 function toggleDone(id){
   todos=todos.map(t=>t.id===id?{...t,done:!t.done}:t);
-  saveTd();render();
-  toast(todos.find(t=>t.id===id)?.done?'✅ Tâche terminée !':'Tâche rouverte');
+  saveTdLocal(); scheduleSync(); render();
+  toast(todos.find(t=>t.id===id)?.done?'&#10003; Terminé !':'Tâche rouverte');
 }
 function claimTd(id){
   const mp=PERSONS.find(p=>p.name.toLowerCase()===(curUser||'').toLowerCase());
-  if(!mp){toast('Configurez votre prénom d\'abord');openBackendModal();return;}
+  if(!mp){ toast('Configurez votre prénom d\'abord'); openCfg(); return; }
   todos=todos.map(t=>{
     if(t.id!==id)return t;
     const cb=t.claimedBy||[];
     return{...t,claimedBy:cb.includes(mp.id)?cb.filter(x=>x!==mp.id):[...cb,mp.id]};
   });
-  saveTd();render();toast(`✋ ${mp.name} prend en charge cette tâche`);
+  saveTdLocal(); scheduleSync(); render();
 }
 function delTd(id){
   todos=todos.filter(t=>t.id!==id);
-  deletedIds.add(id);
-  localStorage.setItem('ev_deleted', JSON.stringify([...deletedIds]));
-  saveTd();render();toast('Supprimé');
+  deletedIds.add(id); saveDelLocal();
+  saveTdLocal(); scheduleSync(); render(); toast('Supprimé');
 }
 
-// ═════════════════════════════════════════════
-//  MODALS AGENDA
-// ═════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  MODAL EVENT
+// ══════════════════════════════════════════════════════
 function openEvModal(ds){
   editEvId=null;
   document.getElementById('mEvTxt').textContent='Nouvelle tâche agenda';
@@ -816,8 +807,8 @@ function openEvModal(ds){
   document.getElementById('evS').value='09:00';
   document.getElementById('evE').value='10:00';
   document.getElementById('evC').value='task';
-  selColor=COLORS[0];selPpEv=[];
-  rEvCp();rEvPp();
+  selColor=COLORS[0]; selPpEv=[];
+  rEvCp(); rEvPp();
   document.getElementById('mEv').classList.add('open');
   setTimeout(()=>document.getElementById('evT').focus(),200);
 }
@@ -830,30 +821,42 @@ function openEvEdit(ev){
   document.getElementById('evS').value=ev.start;
   document.getElementById('evE').value=ev.end;
   document.getElementById('evC').value=ev.cat||'task';
-  selColor=ev.color;selPpEv=[...(ev.persons||[])];
-  rEvCp();rEvPp();
+  selColor=ev.color; selPpEv=[...(ev.persons||[])];
+  rEvCp(); rEvPp();
   document.getElementById('mEv').classList.add('open');
 }
-function rEvCp(){document.getElementById('evCp').innerHTML=COLORS.map(c=>`<div class="cdot${c===selColor?' sel':''}" style="background:${c}" onclick="selColor='${c}';rEvCp()"></div>`).join('');}
-function rEvPp(){document.getElementById('evPp').innerHTML=PERSONS.map(p=>`<div class="psc${selPpEv.includes(p.id)?' sel':''}" onclick="tEvP('${p.id}')"><div class="psa" style="background:${p.color}33;color:${p.color}">${p.ini}</div>${p.name}</div>`).join('');}
-function tEvP(id){selPpEv.includes(id)?selPpEv=selPpEv.filter(x=>x!==id):selPpEv.push(id);rEvPp();}
+function rEvCp(){ document.getElementById('evCp').innerHTML=COLORS.map(c=>`<div class="cdot${c===selColor?' sel':''}" style="background:${c}" onclick="selColor='${c}';rEvCp()"></div>`).join(''); }
+function rEvPp(){ document.getElementById('evPp').innerHTML=PERSONS.map(p=>`<div class="psc${selPpEv.includes(p.id)?' sel':''}" onclick="tEvP('${p.id}')"><div class="psa" style="background:${p.color}33;color:${p.color}">${p.ini}</div>${p.name}</div>`).join(''); }
+function tEvP(id){ selPpEv.includes(id)?selPpEv=selPpEv.filter(x=>x!==id):selPpEv.push(id); rEvPp(); }
+
 function saveEvent(){
   const title=document.getElementById('evT').value.trim();
-  if(!title){toast('Le titre est obligatoire');return;}
-  const ev={id:editEvId||uid(),title,desc:document.getElementById('evD').value.trim(),date:document.getElementById('evDt').value,start:document.getElementById('evS').value,end:document.getElementById('evE').value,cat:document.getElementById('evC').value,color:selColor,persons:[...selPpEv],createdBy:curUser||'Moi',updatedAt:new Date().toISOString()};
-  if(editEvId){events=events.map(e=>e.id===editEvId?ev:e);toast('Modifié ✓');}
-  else{events.push(ev);toast('Ajouté ✓');}
-  saveEv();cm('mEv');cm('mDt');render();
+  if(!title){ toast('Le titre est obligatoire'); return; }
+  const ev={
+    id: editEvId||uid(), title,
+    desc:  document.getElementById('evD').value.trim(),
+    date:  document.getElementById('evDt').value,
+    start: document.getElementById('evS').value,
+    end:   document.getElementById('evE').value,
+    cat:   document.getElementById('evC').value,
+    color: selColor,
+    persons: [...selPpEv],
+    createdBy: curUser||'Moi',
+    updatedAt: new Date().toISOString()
+  };
+  if(editEvId) events=events.map(e=>e.id===editEvId?ev:e);
+  else events.push(ev);
+  saveEvLocal(); scheduleSync(); cm('mEv'); cm('mDt'); render();
+  toast(editEvId?'Modifié &#10003;':'Ajouté &#10003;');
 }
 
-// Detail
-let detEvId=null;
+// ── Détail event ───────────────────────────────────────
 function showDt(id){
-  detEvId=id;const ev=events.find(e=>e.id===id);if(!ev)return;
+  detEvId=id; const ev=events.find(e=>e.id===id); if(!ev)return;
   document.getElementById('dtTxt').textContent=ev.title;
-  const ppl=(ev.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dper"><div class="pav" style="background:${p.color}22;color:${p.color};width:19px;height:19px;font-size:0.58rem">${p.ini}</div>${p.name}</div>`:''}).join('');
+  const ppl=(ev.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dper"><div class="pav" style="background:${p.color}22;color:${p.color};width:19px;height:19px;font-size:0.57rem">${p.ini}</div>${p.name}</div>`:''}).join('');
   document.getElementById('dtBody').innerHTML=`
-    <div class="dl">Date & Heure</div><div class="dv2">${pd(ev.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · ${ev.start}–${ev.end}</div>
+    <div class="dl">Date &amp; Heure</div><div class="dv2">${pd(ev.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} · ${ev.start}–${ev.end}</div>
     ${ev.desc?`<div class="dl">Description</div><div class="dv2">${ev.desc}</div>`:''}
     <div class="dl">Catégorie</div><div class="dv2" style="color:${ev.color}">${CATS[ev.cat]||ev.cat}</div>
     <div class="dl">Assigné à</div><div class="dppl">${ppl||'<span style="color:var(--tm)">Non assigné</span>'}</div>
@@ -861,149 +864,110 @@ function showDt(id){
   document.getElementById('mDt').classList.add('open');
 }
 function deleteEvent(){
-  // Marque comme supprimé pour éviter qu'il revienne du Sheet
+  if(!detEvId)return;
   events=events.filter(e=>e.id!==detEvId);
-  deletedIds.add(detEvId);
-  localStorage.setItem('ev_deleted', JSON.stringify([...deletedIds]));
-  saveEv();cm('mDt');render();toast('Supprimé');
+  deletedIds.add(detEvId); saveDelLocal();
+  saveEvLocal();
+  // Sync immédiate (pas de debounce) pour propager la suppression rapidement
+  doSync();
+  cm('mDt'); render(); toast('Supprimé');
 }
-function editEvent(){const ev=events.find(e=>e.id===detEvId);if(!ev)return;cm('mDt');openEvEdit(ev);}
+function editEvent(){ const ev=events.find(e=>e.id===detEvId); if(!ev)return; cm('mDt'); openEvEdit(ev); }
 
-// ═════════════════════════════════════════════
-//  MODALS À FAIRE
-// ═════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  MODAL TODO
+// ══════════════════════════════════════════════════════
 function openTodoModal(){
   editTdId=null;
   document.getElementById('mTdTxt').textContent='Nouvelle tâche à faire';
   document.getElementById('tdT').value='';
   document.getElementById('tdD').value='';
-  selPrio='medium';selPpTd=[];
-  rPrSel();rTdPp();
+  selPrio='medium'; selPpTd=[];
+  rPrSel(); rTdPp();
   document.getElementById('mTd').classList.add('open');
   setTimeout(()=>document.getElementById('tdT').focus(),200);
 }
 function openTdEdit(id){
-  const t=todos.find(x=>x.id===id);if(!t)return;
+  const t=todos.find(x=>x.id===id); if(!t)return;
   editTdId=id;
-  document.getElementById('mTdTxt').textContent='Modifier la tâche';
+  document.getElementById('mTdTxt').textContent='Modifier';
   document.getElementById('tdT').value=t.title;
   document.getElementById('tdD').value=t.desc||'';
-  selPrio=t.priority||'medium';selPpTd=[...(t.claimedBy||[])];
-  rPrSel();rTdPp();
+  selPrio=t.priority||'medium'; selPpTd=[...(t.claimedBy||[])];
+  rPrSel(); rTdPp();
   document.getElementById('mTd').classList.add('open');
 }
-function rPrSel(){
-  [{id:'prH',p:'high'},{id:'prM',p:'medium'},{id:'prL',p:'low'}].forEach(({id,p})=>{
-    const el=document.getElementById(id);if(!el)return;
-    el.classList.toggle('active',selPrio===p);
-  });
-}
-function selPrio2(p){selPrio=p;rPrSel();}
-// Override global selPrio to avoid name clash with var
-document.getElementById('prH').onclick=()=>selPrio2('high');
-document.getElementById('prM').onclick=()=>selPrio2('medium');
-document.getElementById('prL').onclick=()=>selPrio2('low');
+function rPrSel(){ ['high','medium','low'].forEach(p=>{ const el=document.getElementById('pr'+p[0].toUpperCase()+p.slice(1)); if(el)el.classList.toggle('active',selPrio===p); }); }
+function selPr(p){ selPrio=p; rPrSel(); }
+function rTdPp(){ document.getElementById('tdPp').innerHTML=PERSONS.map(p=>`<div class="psc${selPpTd.includes(p.id)?' sel':''}" onclick="tTdP('${p.id}')"><div class="psa" style="background:${p.color}33;color:${p.color}">${p.ini}</div>${p.name}</div>`).join(''); }
+function tTdP(id){ selPpTd.includes(id)?selPpTd=selPpTd.filter(x=>x!==id):selPpTd.push(id); rTdPp(); }
 
-function rTdPp(){document.getElementById('tdPp').innerHTML=PERSONS.map(p=>`<div class="psc${selPpTd.includes(p.id)?' sel':''}" onclick="tTdP('${p.id}')"><div class="psa" style="background:${p.color}33;color:${p.color}">${p.ini}</div>${p.name}</div>`).join('');}
-function tTdP(id){selPpTd.includes(id)?selPpTd=selPpTd.filter(x=>x!==id):selPpTd.push(id);rTdPp();}
 function saveTodo(){
   const title=document.getElementById('tdT').value.trim();
-  if(!title){toast('Le titre est obligatoire');return;}
+  if(!title){ toast('Le titre est obligatoire'); return; }
   const existing=editTdId?todos.find(t=>t.id===editTdId):null;
-  const td={id:editTdId||uid(),title,desc:document.getElementById('tdD').value.trim(),priority:selPrio,persons:[...selPpTd],claimedBy:existing?.claimedBy||[],done:existing?.done||false,createdBy:curUser||'Moi',createdAt:existing?.createdAt||new Date().toISOString()};
-  if(editTdId){todos=todos.map(t=>t.id===editTdId?td:t);toast('Modifié ✓');}
-  else{todos.push(td);toast('Tâche ajoutée ✓');}
-  saveTd();cm('mTd');render();
+  const td={
+    id: editTdId||uid(), title,
+    desc: document.getElementById('tdD').value.trim(),
+    priority: selPrio, persons: [...selPpTd],
+    claimedBy: existing?.claimedBy||[],
+    done: existing?.done||false,
+    createdBy: curUser||'Moi',
+    createdAt: existing?.createdAt||new Date().toISOString()
+  };
+  if(editTdId) todos=todos.map(t=>t.id===editTdId?td:t);
+  else todos.push(td);
+  saveTdLocal(); scheduleSync(); cm('mTd'); render();
+  toast(editTdId?'Modifié &#10003;':'Ajouté &#10003;');
 }
 
-// ═════════════════════════════════════════════
-//  BACKEND CONFIG
-// ═════════════════════════════════════════════
-function openBackendModal(){
-  document.getElementById('cfgU').value=backUrl;
-  document.getElementById('cfgN').value=curUser;
-  document.getElementById('mBk').classList.add('open');
-}
+// ══════════════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════════════
+function openCfg(){ document.getElementById('cfgU').value=backUrl; document.getElementById('cfgN').value=curUser; document.getElementById('mCfg').classList.add('open'); }
 function saveCfg(){
   backUrl=document.getElementById('cfgU').value.trim();
   curUser=document.getElementById('cfgN').value.trim();
-  localStorage.setItem('ev_backend',backUrl);
+  localStorage.setItem('ev_url',backUrl);
   localStorage.setItem('ev_user',curUser);
-  cm('mBk');
-  updateBanner();
-  if(backUrl){loadBackend();setInterval(loadBackend,30000);}
-  toast('Sauvegardé ✓');render();
+  cm('mCfg'); updateSyncBar();
+  if(backUrl){ loadFromSheet(); }
+  toast('Sauvegardé &#10003;'); render();
 }
-function updateBanner(){
-  const bn=document.getElementById('backendBanner');
+function updateSyncBar(){
+  const bar=document.getElementById('syncBar');
+  const dot=document.getElementById('sdot');
+  const txt=document.getElementById('syncTxt');
   if(backUrl){
-    bn.className='banner banner-backend ok';
-    document.getElementById('sdot').className='sdot pulse';
-    document.getElementById('bannerTxt').textContent=`Sync active${curUser?' — '+curUser:''}`;
-    document.getElementById('bannerCfgBtn').textContent='Modifier';
+    bar.className='sync-bar ok';
+    dot.className='sdot pulse';
+    txt.textContent='Sync active'+(curUser?' — '+curUser:'');
+    bar.querySelector('button').textContent='Modifier';
+  } else {
+    bar.className='sync-bar warn';
+    dot.className='sdot';
+    txt.textContent='Mode local';
   }
 }
 
-// Close on backdrop
-['mEv','mDt','mTd','mBk'].forEach(id=>{
-  document.getElementById(id).addEventListener('click',e=>{if(e.target===e.currentTarget)cm(id);});
+// Close modals on backdrop click
+['mEv','mDt','mTd','mCfg'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{ if(e.target===e.currentTarget)cm(id); });
 });
 
-// ═════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 //  PWA
-// ═════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();deferredPrompt=e;
-  document.getElementById('installBanner').classList.add('show');
-});
-document.getElementById('installBtn').addEventListener('click',async()=>{
-  if(!deferredPrompt)return;
-  deferredPrompt.prompt();
-  const{outcome}=await deferredPrompt.userChoice;
-  if(outcome==='accepted')document.getElementById('installBanner').classList.remove('show');
-  deferredPrompt=null;
-});
-
-
-// ── FILTER DRAWER (mobile) ──────────────────────
-function openFilterDrawer(){
-  renderFilterDrawer();
-  document.getElementById('fdrawerBd').classList.add('open');
-  document.getElementById('fdrawer').classList.add('open');
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+updateSyncBar();
+if(backUrl){
+  loadFromSheet();
+  setInterval(loadFromSheet, 30000);
 }
-function closeFilterDrawer(){
-  document.getElementById('fdrawerBd').classList.remove('open');
-  document.getElementById('fdrawer').classList.remove('open');
-}
-function renderFilterDrawer(){
-  const list = document.getElementById('fdrawerList');
-  const allActive = fp.length === 0;
-  list.innerHTML = `<div class="fdrawer-all${allActive?' active':''}" onclick="fdAll()">👥 Toutes les personnes</div>`;
-  PERSONS.forEach(p => {
-    const a = fp.includes(p.id);
-    list.innerHTML += `<div class="fdrawer-chip${a?' active':''}" onclick="fdToggle('${p.id}')">
-      <div class="fdrawer-av" style="background:${p.color}22;color:${p.color}">${p.ini}</div>
-      <span class="fdrawer-name">${p.name}</span>
-      <div class="fdrawer-ck">${a?'✓':''}</div>
-    </div>`;
-  });
-}
-function fdAll(){fp=[];updateFilterBadge();render();renderFilterDrawer();}
-function fdToggle(id){
-  fp.includes(id)?fp=fp.filter(x=>x!==id):fp.push(id);
-  updateFilterBadge();render();renderFilterDrawer();
-}
-function updateFilterBadge(){
-  const b=document.getElementById('filterBadge');
-  if(b) b.classList.toggle('show', fp.length > 0);
-}
-
-// Init
-updateBanner();
-if(backUrl){loadBackend();setInterval(loadBackend,30000);}
 render();
 </script>
 </body>
