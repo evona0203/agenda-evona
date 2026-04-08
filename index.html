@@ -405,7 +405,7 @@ const PERSONS=[
   {id:'p1',name:'Kevin',   ini:'KB',color:'#7c6aff'},
   {id:'p2',name:'Antony',  ini:'AR',color:'#ff6a8a'},
   {id:'p3',name:'Thibaud',   ini:'TM',color:'#6affd4'},
- 
+  
 ];
 const COLORS=['#7c6aff','#ff6a8a','#6affd4','#ffb86a','#6ab8ff','#ff9f6a','#c46aff'];
 const CATS={meeting:'Réunion',task:'Tâche',deadline:'Deadline',other:'Autre'};
@@ -427,7 +427,7 @@ let curUser=localStorage.getItem('ev_user')||'';
 // Seed
 if(!events.length){
   const t=new Date();
-  const fd=n=>{const x=new Date(t);x.setDate(x.getDate()+n);return x.toISOString().slice(0,10);};
+  const fd=n=>{const x=new Date(t);x.setDate(x.getDate()+n);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
   events=[
     {id:'e1',title:'Réunion équipe',desc:'Point hebdomadaire',date:fd(0),start:'09:00',end:'10:00',color:'#7c6aff',cat:'meeting',persons:['p1','p2','p3'],createdBy:'Marie'},
     {id:'e2',title:'Rapport mensuel',desc:'Finalisation Q2',date:fd(1),start:'14:00',end:'16:00',color:'#ff6a8a',cat:'deadline',persons:['p2','p4'],createdBy:'Thomas'},
@@ -450,17 +450,22 @@ function saveTd(){localStorage.setItem('ev_todos',JSON.stringify(todos));syncAll
 
 function syncAll(){
   if(!backUrl) return;
-  // Encode les données dans l'URL (JSONP-compatible, pas de CORS)
+  _syncPending = true;
+  _lastSync = Date.now();
   const payload = encodeURIComponent(JSON.stringify({events, todos}));
   const cb = '_sync' + Date.now();
-  window[cb] = (r) => { delete window[cb]; };
+  window[cb] = (r) => { delete window[cb]; _syncPending = false; _lastSync = Date.now(); };
   const s = document.createElement('script');
   s.src = backUrl + '?action=setAll&data=' + payload + '&callback=' + cb + '&t=' + Date.now();
-  s.onerror = () => delete window[cb];
+  s.onerror = () => { delete window[cb]; _syncPending = false; };
   document.head.appendChild(s);
-  setTimeout(() => { try { document.head.removeChild(s); } catch(e){} }, 8000);
+  setTimeout(() => { try { document.head.removeChild(s); } catch(e){} _syncPending = false; }, 10000);
 }
+let _syncPending = false;
+let _lastSync = 0;
 async function loadBackend(){
+  // Ne pas recharger si une sync est en cours ou vient de se faire (< 5s)
+  if(_syncPending || (Date.now() - _lastSync < 5000)) return;
   if(!backUrl) return;
   try{
     const data=await new Promise((res,rej)=>{
@@ -492,7 +497,7 @@ async function loadBackend(){
 //  HELPERS
 // ═════════════════════════════════════════════
 const uid=()=>'i'+Date.now()+Math.random().toString(36).slice(2,5);
-const fd=d=>new Date(d).toISOString().slice(0,10);
+const fd=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
 const pd=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
 const isT=d=>{const t=new Date();return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate();};
 const gp=id=>PERSONS.find(p=>p.id===id);
