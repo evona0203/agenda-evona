@@ -1,41 +1,68 @@
-// Service Worker — Agenda Evona
-const CACHE = 'evona-v1';
-const ASSETS = [
-  './',
+// Agenda Evona — Service Worker v2
+const CACHE_NAME = 'evona-cache-v2';
+
+const PRECACHE = [
   './index.html',
   './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
 ];
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())
+// Installation : mise en cache des fichiers statiques
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(PRECACHE))
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
+// Activation : supprime les anciens caches
+self.addEventListener('activate', event => {
+  event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      Promise.all(
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => caches.delete(key))
+      )
     ).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', e => {
-  // Network first pour les API Google, cache first pour le reste
-  if (e.request.url.includes('script.google.com') || e.request.url.includes('fonts.googleapis.com')) {
-    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+// Fetch : cache-first pour les assets, network-first pour Google APIs
+self.addEventListener('fetch', event => {
+  const url = event.request.url;
+
+  // Laisse passer les requêtes Google (Apps Script, Fonts)
+  if (url.includes('script.google.com') || url.includes('googleapis.com') || url.includes('gstatic.com')) {
+    event.respondWith(
+      fetch(event.request).catch(() => new Response('', { status: 503 }))
+    );
     return;
   }
-  e.respondWith(
-    caches.match(e.request).then(cached => {
+
+  // Cache-first pour tout le reste
+  event.respondWith(
+    caches.match(event.request).then(cached => {
       if (cached) return cached;
-      return fetch(e.request).then(resp => {
-        if (resp.status === 200) {
-          const clone = resp.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
+
+      return fetch(event.request).then(response => {
+        // Met en cache les réponses valides
+        if (response && response.status === 200 && response.type === 'basic') {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
         }
-        return resp;
-      }).catch(() => caches.match('./index.html'));
+        return response;
+      }).catch(() => {
+        // Fallback sur index.html si hors-ligne
+        if (event.request.destination === 'document') {
+          return caches.match('./index.html');
+        }
+        return new Response('', { status: 503 });
+      });
     })
   );
 });
