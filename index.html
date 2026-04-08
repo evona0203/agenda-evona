@@ -491,38 +491,80 @@ function mergeData(local, remote) {
 }
 
 async function loadBackend(){
-  if (_syncPending) return;
+  if (_syncPending) return;  // Pas de rechargement si une sauvegarde est en cours
   if (!backUrl) return;
   try {
     const data = await new Promise((res, rej) => {
       const cb = '_cb' + Date.now();
-      window[cb] = d => res(d);
+      window[cb] = d => { delete window[cb]; res(d); };
       const s = document.createElement('script');
       s.src = backUrl + '?action=getAll&callback=' + cb + '&t=' + Date.now();
-      s.onerror = rej;
+      s.onerror = () => { delete window[cb]; rej('error'); };
       document.head.appendChild(s);
-      setTimeout(() => rej('timeout'), 8000);
+      setTimeout(() => { delete window[cb]; rej('timeout'); }, 10000);
     });
+
     if (!data) return;
+
     let changed = false;
-    if (data.events) {
-      const merged = mergeData(events, data.events);
-      if (merged.length !== events.length) {
-        events = merged;
+
+    // EVENTS : fusionne Sheet + local, le local gagne en cas de conflit d'ID
+    if (data.events && Array.isArray(data.events)) {
+      const localIds = new Set(events.map(e => e.id));
+      // Items du Sheet absents en local = nouveaux depuis un autre appareil
+      const newFromSheet = data.events.filter(e => e.id && !localIds.has(e.id));
+      if (newFromSheet.length > 0) {
+        events = [...events, ...newFromSheet];
         localStorage.setItem('ev_events', JSON.stringify(events));
         changed = true;
       }
+      // Met aussi à jour les events locaux modifiés sur un autre appareil
+      // (compare updatedAt)
+      const sheetById = {};
+      data.events.forEach(e => { if(e.id) sheetById[e.id] = e; });
+      events = events.map(local => {
+        const remote = sheetById[local.id];
+        if (!remote) return local;
+        // Si le remote est plus récent, on le prend
+        if (remote.updatedAt && local.updatedAt && remote.updatedAt > local.updatedAt) {
+          changed = true;
+          return remote;
+        }
+        return local;
+      });
+      if (changed) localStorage.setItem('ev_events', JSON.stringify(events));
     }
-    if (data.todos) {
-      const merged = mergeData(todos, data.todos);
-      if (merged.length !== todos.length) {
-        todos = merged;
+
+    // TODOS : même logique
+    if (data.todos && Array.isArray(data.todos)) {
+      const localIds = new Set(todos.map(t => t.id));
+      const newFromSheet = data.todos.filter(t => t.id && !localIds.has(t.id));
+      if (newFromSheet.length > 0) {
+        todos = [...todos, ...newFromSheet];
         localStorage.setItem('ev_todos', JSON.stringify(todos));
         changed = true;
       }
+      // Sync statut done depuis autre appareil
+      const sheetById = {};
+      data.todos.forEach(t => { if(t.id) sheetById[t.id] = t; });
+      todos = todos.map(local => {
+        const remote = sheetById[local.id];
+        if (!remote) return local;
+        // Sync done + claimedBy depuis le Sheet
+        if (remote.done !== local.done || JSON.stringify(remote.claimedBy) !== JSON.stringify(local.claimedBy)) {
+          changed = true;
+          return { ...local, done: remote.done, claimedBy: remote.claimedBy };
+        }
+        return local;
+      });
+      if (changed) localStorage.setItem('ev_todos', JSON.stringify(todos));
     }
+
     if (changed) render();
-  } catch(e) {}
+
+  } catch(e) {
+    // Silencieux - pas de connexion ou timeout
+  }
 }
 
 // ═════════════════════════════════════════════
