@@ -166,7 +166,7 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
 
 /* BOTTOM NAV */
 .bnav{display:none;background:var(--sf);border-top:1px solid var(--bd);padding:6px 0;padding-bottom:calc(6px + var(--sb));flex-shrink:0;}
-@media(max-width:680px){.bnav{display:flex;} header .hd-nav{display:none;} .banner-backend{display:none;} .banner-install{font-size:0.72rem;padding:5px 10px;} #mobileGear{display:flex!important;padding:6px 8px;border:1px solid var(--bd);border-radius:8px;color:var(--tm);background:var(--sf2);margin-left:0;}}
+@media(max-width:680px){.bnav{display:flex;} header .hd-nav{display:none;} .banner-backend{display:none!important;} .banner-install{font-size:0.72rem;padding:5px 10px;} #mobileGear{display:flex!important;padding:6px 8px;border:1px solid var(--bd);border-radius:8px;color:var(--tm);background:var(--sf2);margin-left:0;}}
 .bnis{display:flex;flex:1;}
 .bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--tm);cursor:pointer;padding:3px 0;font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;transition:color .15s;}
 .bni.active{color:var(--ac);}
@@ -222,6 +222,28 @@ textarea{resize:vertical;min-height:58px;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px;}
+
+/* FILTER DRAWER (mobile) */
+.fdrawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:150;opacity:0;pointer-events:none;transition:opacity .25s;}
+.fdrawer-backdrop.open{opacity:1;pointer-events:all;}
+.fdrawer{position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-radius:20px 20px 0 0;border-top:1px solid var(--bd);padding:16px 18px 20px;z-index:151;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);padding-bottom:calc(20px + var(--sb));}
+.fdrawer.open{transform:translateY(0);}
+.fdrawer-handle{width:36px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 14px;}
+.fdrawer-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;margin-bottom:14px;}
+.fdrawer-persons{display:flex;flex-direction:column;gap:6px;}
+.fdrawer-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--bd);cursor:pointer;transition:all .15s;user-select:none;}
+.fdrawer-chip.active{border-color:var(--ac);background:rgba(124,106,255,.1);}
+.fdrawer-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0;}
+.fdrawer-name{flex:1;font-size:0.9rem;}
+.fdrawer-ck{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:0.65rem;transition:all .15s;}
+.fdrawer-chip.active .fdrawer-ck{background:var(--ac);border-color:var(--ac);color:#fff;}
+.fdrawer-all{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;margin-bottom:4px;font-size:0.9rem;transition:background .15s;}
+.fdrawer-all:hover{background:var(--sf2);}
+.fdrawer-all.active{background:var(--ac);color:#fff;border-radius:10px;}
+/* Filter indicator badge */
+.filter-badge{position:absolute;top:-3px;right:-3px;width:8px;height:8px;background:var(--ac2);border-radius:50%;display:none;}
+.filter-badge.show{display:block;}
+#filterNavBtn{position:relative;}
 </style>
 </head>
 <body>
@@ -293,8 +315,17 @@ textarea{resize:vertical;min-height:58px;}
       <button class="bni active" id="bnav-week" onclick="setView('week')"><span class="bni-ic">🗓</span>Semaine</button>
       <button class="bni" id="bnav-month" onclick="setView('month')"><span class="bni-ic">📆</span>Mois</button>
       <button class="bni" id="bnav-todo" onclick="setView('todo')"><span class="bni-ic">✅</span>À faire</button>
+      <button class="bni" id="filterNavBtn" onclick="openFilterDrawer()"><span class="bni-ic">👥</span>Filtrer<span class="filter-badge" id="filterBadge"></span></button>
     </div>
   </nav>
+
+  <!-- FILTER DRAWER (mobile) -->
+  <div class="fdrawer-backdrop" id="fdrawerBd" onclick="closeFilterDrawer()"></div>
+  <div class="fdrawer" id="fdrawer">
+    <div class="fdrawer-handle"></div>
+    <div class="fdrawer-title">Filtrer par personne</div>
+    <div class="fdrawer-persons" id="fdrawerList"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -808,6 +839,40 @@ document.getElementById('installBtn').addEventListener('click',async()=>{
   if(outcome==='accepted')document.getElementById('installBanner').classList.remove('show');
   deferredPrompt=null;
 });
+
+
+// ── FILTER DRAWER (mobile) ──────────────────────
+function openFilterDrawer(){
+  renderFilterDrawer();
+  document.getElementById('fdrawerBd').classList.add('open');
+  document.getElementById('fdrawer').classList.add('open');
+}
+function closeFilterDrawer(){
+  document.getElementById('fdrawerBd').classList.remove('open');
+  document.getElementById('fdrawer').classList.remove('open');
+}
+function renderFilterDrawer(){
+  const list = document.getElementById('fdrawerList');
+  const allActive = fp.length === 0;
+  list.innerHTML = `<div class="fdrawer-all${allActive?' active':''}" onclick="fdAll()">👥 Toutes les personnes</div>`;
+  PERSONS.forEach(p => {
+    const a = fp.includes(p.id);
+    list.innerHTML += `<div class="fdrawer-chip${a?' active':''}" onclick="fdToggle('${p.id}')">
+      <div class="fdrawer-av" style="background:${p.color}22;color:${p.color}">${p.ini}</div>
+      <span class="fdrawer-name">${p.name}</span>
+      <div class="fdrawer-ck">${a?'✓':''}</div>
+    </div>`;
+  });
+}
+function fdAll(){fp=[];updateFilterBadge();render();renderFilterDrawer();}
+function fdToggle(id){
+  fp.includes(id)?fp=fp.filter(x=>x!==id):fp.push(id);
+  updateFilterBadge();render();renderFilterDrawer();
+}
+function updateFilterBadge(){
+  const b=document.getElementById('filterBadge');
+  if(b) b.classList.toggle('show', fp.length > 0);
+}
 
 // Init
 updateBanner();
