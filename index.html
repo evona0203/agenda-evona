@@ -449,48 +449,80 @@ function saveEv(){localStorage.setItem('ev_events',JSON.stringify(events));syncA
 function saveTd(){localStorage.setItem('ev_todos',JSON.stringify(todos));syncAll();}
 
 function syncAll(){
-  if(!backUrl) return;
+  if (!backUrl) return;
+  // Annule le timer en attente et programme un nouvel envoi dans 1s
+  // (debounce : évite d'envoyer à chaque frappe)
+  if (_syncTimer) clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(() => doSync(), 1000);
+}
+
+function doSync(){
+  if (!backUrl) return;
   _syncPending = true;
   _lastSync = Date.now();
   const payload = encodeURIComponent(JSON.stringify({events, todos}));
   const cb = '_sync' + Date.now();
-  window[cb] = (r) => { delete window[cb]; _syncPending = false; _lastSync = Date.now(); };
+  window[cb] = (r) => {
+    delete window[cb];
+    _syncPending = false;
+    _lastSync = Date.now();
+  };
   const s = document.createElement('script');
   s.src = backUrl + '?action=setAll&data=' + payload + '&callback=' + cb + '&t=' + Date.now();
   s.onerror = () => { delete window[cb]; _syncPending = false; };
   document.head.appendChild(s);
-  setTimeout(() => { try { document.head.removeChild(s); } catch(e){} _syncPending = false; }, 10000);
+  // Timeout de sécurité : libère le verrou après 12s même si pas de réponse
+  setTimeout(() => {
+    _syncPending = false;
+    try { document.head.removeChild(s); } catch(e){}
+  }, 12000);
 }
 let _syncPending = false;
 let _lastSync = 0;
+let _syncTimer = null;
+
+// Fusionne les données du Sheet avec le local — le local est toujours prioritaire
+function mergeData(local, remote) {
+  if (!remote || remote.length === 0) return local;
+  const localIds = new Set(local.map(x => x.id));
+  // Ajoute uniquement les items du Sheet qui n'existent pas en local
+  const remoteOnly = remote.filter(x => !localIds.has(x.id));
+  return [...local, ...remoteOnly];
+}
+
 async function loadBackend(){
-  // Ne pas recharger si une sync est en cours ou vient de se faire (< 5s)
-  if(_syncPending || (Date.now() - _lastSync < 5000)) return;
-  if(!backUrl) return;
-  try{
-    const data=await new Promise((res,rej)=>{
-      const cb='_cb'+Date.now(); window[cb]=d=>res(d);
-      const s=document.createElement('script');
-      s.src=backUrl+'?action=getAll&callback='+cb+'&t='+Date.now();
-      s.onerror=rej; document.head.appendChild(s); setTimeout(()=>rej(),5000);
+  if (_syncPending) return;
+  if (!backUrl) return;
+  try {
+    const data = await new Promise((res, rej) => {
+      const cb = '_cb' + Date.now();
+      window[cb] = d => res(d);
+      const s = document.createElement('script');
+      s.src = backUrl + '?action=getAll&callback=' + cb + '&t=' + Date.now();
+      s.onerror = rej;
+      document.head.appendChild(s);
+      setTimeout(() => rej('timeout'), 8000);
     });
-    // Ne remplace les données locales que si le Sheet contient des données
-    // et que les données du Sheet sont plus récentes (plus nombreuses ou fusionnées)
-    if(data?.events && data.events.length > 0){
-      // Fusionne : garde les events locaux qui ne sont pas dans le Sheet
-      const sheetIds = new Set(data.events.map(e=>e.id));
-      const localOnly = events.filter(e=>!sheetIds.has(e.id));
-      events = [...data.events, ...localOnly];
-      localStorage.setItem('ev_events',JSON.stringify(events));
+    if (!data) return;
+    let changed = false;
+    if (data.events) {
+      const merged = mergeData(events, data.events);
+      if (merged.length !== events.length) {
+        events = merged;
+        localStorage.setItem('ev_events', JSON.stringify(events));
+        changed = true;
+      }
     }
-    if(data?.todos && data.todos.length > 0){
-      const sheetIds = new Set(data.todos.map(t=>t.id));
-      const localOnly = todos.filter(t=>!sheetIds.has(t.id));
-      todos = [...data.todos, ...localOnly];
-      localStorage.setItem('ev_todos',JSON.stringify(todos));
+    if (data.todos) {
+      const merged = mergeData(todos, data.todos);
+      if (merged.length !== todos.length) {
+        todos = merged;
+        localStorage.setItem('ev_todos', JSON.stringify(todos));
+        changed = true;
+      }
     }
-    render();
-  }catch(e){}
+    if (changed) render();
+  } catch(e) {}
 }
 
 // ═════════════════════════════════════════════
