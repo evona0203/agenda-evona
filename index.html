@@ -408,7 +408,7 @@ let selPpEv = [], selPpTd = [];
 let selPrio = 'medium';
 let tdFilter = 'all';
 let detEvId = null, editEvId = null, editTdId = null;
-let backUrl  = localStorage.getItem('ev_url')  || '';
+let backUrl  = localStorage.getItem('ev_url')  || 'https://script.google.com/macros/s/AKfycbzc7T08KRYNBxzbJcqkaVeV6DN1I6nl8m9nTkHvA_DkAA_iWUgjuy58nhW4UOJ_eICf/exec';
 let curUser  = localStorage.getItem('ev_user') || '';
 
 // ══════════════════════════════════════════════════════
@@ -432,40 +432,81 @@ let syncTimer = null;
 function scheduleSync() {
   if (!backUrl) return;
   if (syncTimer) clearTimeout(syncTimer);
-  // Debounce 800ms pour éviter d'envoyer à chaque frappe
   syncTimer = setTimeout(doSync, 800);
 }
 
+// Envoie les données via fetch + no-cors (fonctionne partout sans CORS)
+// ET via une iframe cachée en fallback (contourne les restrictions Chrome mobile)
 function doSync() {
   if (!backUrl || syncBusy) return;
   syncBusy = true;
-  const payload = encodeURIComponent(JSON.stringify({
+  const payload = JSON.stringify({
     events:  events,
     todos:   todos,
     deleted: [...deletedIds]
-  }));
-  const cb = '_s' + Date.now();
-  window[cb] = () => { delete window[cb]; syncBusy = false; };
-  const s = document.createElement('script');
-  s.src = backUrl + '?action=setAll&data=' + payload + '&callback=' + cb + '&t=' + Date.now();
-  s.onerror = () => { delete window[cb]; syncBusy = false; };
-  document.head.appendChild(s);
-  // Libère le verrou au bout de 15s même sans réponse
-  setTimeout(() => { syncBusy = false; try{document.head.removeChild(s);}catch(e){} }, 15000);
+  });
+
+  // Méthode 1 : fetch POST (fonctionne sur PC et la plupart des navigateurs)
+  fetch(backUrl, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: payload
+  })
+  .then(() => { syncBusy = false; })
+  .catch(() => {
+    // Méthode 2 : iframe fallback si fetch bloqué
+    syncViaIframe(payload);
+    syncBusy = false;
+  });
+
+  setTimeout(() => { syncBusy = false; }, 15000);
 }
+
+function syncViaIframe(payload) {
+  try {
+    const enc = encodeURIComponent(payload);
+    const url = backUrl + '?action=setAll&data=' + enc + '&callback=_noop&t=' + Date.now();
+    const ifr = document.createElement('iframe');
+    ifr.style.display = 'none';
+    ifr.src = url;
+    document.body.appendChild(ifr);
+    setTimeout(() => { try { document.body.removeChild(ifr); } catch(e) {} }, 10000);
+  } catch(e) {}
+}
+
+window._noop = () => {};
 
 async function loadFromSheet() {
   if (!backUrl || syncBusy) return;
   try {
-    const data = await new Promise((res, rej) => {
-      const cb = '_l' + Date.now();
-      window[cb] = d => { delete window[cb]; res(d); };
-      const s = document.createElement('script');
-      s.src = backUrl + '?action=getAll&callback=' + cb + '&t=' + Date.now();
-      s.onerror = () => { delete window[cb]; rej(); };
-      document.head.appendChild(s);
-      setTimeout(() => { delete window[cb]; rej('timeout'); }, 10000);
+    // Méthode principale : fetch GET avec réponse JSON
+    const resp = await fetch(backUrl + '?action=getAll&t=' + Date.now(), {
+      method: 'GET',
+      mode: 'cors',
+      cache: 'no-store'
     });
+    
+    let data = null;
+    if (resp.ok) {
+      const text = await resp.text();
+      // La réponse peut être JSONP "cb({...})" ou JSON pur "{...}"
+      const match = text.match(/\{.*\}/s);
+      if (match) data = JSON.parse(match[0]);
+    }
+    
+    // Fallback JSONP si fetch CORS bloqué
+    if (!data) {
+      data = await new Promise((res, rej) => {
+        const cb = '_l' + Date.now();
+        window[cb] = d => { delete window[cb]; res(d); };
+        const s = document.createElement('script');
+        s.src = backUrl + '?action=getAll&callback=' + cb + '&t=' + Date.now();
+        s.onerror = () => { delete window[cb]; rej(); };
+        document.head.appendChild(s);
+        setTimeout(() => { delete window[cb]; rej('timeout'); }, 10000);
+      });
+    }
     if (!data) return;
 
     let changed = false;
