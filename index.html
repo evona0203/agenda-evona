@@ -391,7 +391,12 @@ textarea{resize:vertical;min-height:58px;}
     <div class="fg"><label>Date</label><input type="date" id="planDate"></div>
     <div class="fg"><label>Catégorie</label><select id="planCat"><option value="task">Tâche</option><option value="meeting">Réunion</option><option value="deadline">Deadline</option><option value="other">Autre</option></select></div>
   </div>
-  <div class="r2">
+  <div style="margin-bottom:13px;">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;font-size:0.88rem;font-weight:500;color:var(--tx);">
+      <input type="checkbox" id="planAllDay" onchange="togglePlanAllDay()" style="width:auto;accent-color:var(--ac);"> Journée entière
+    </label>
+  </div>
+  <div id="planTimeRow" class="r2">
     <div class="fg"><label>Heure début</label><input type="time" id="planStart" value="09:00"></div>
     <div class="fg"><label>Heure fin</label><input type="time" id="planEnd" value="10:00"></div>
   </div>
@@ -1038,8 +1043,25 @@ function openPlanModal(id) {
   document.getElementById('planEnd').value = '10:00';
   document.getElementById('planCat').value = 'task';
   document.getElementById('planKeep').checked = true;
+  document.getElementById('planAllDay').checked = false;
+  document.getElementById('planTimeRow').style.display = 'grid';
+  document.getElementById('planStart').value = '09:00';
+  document.getElementById('planEnd').value   = '10:00';
   rPlanCp();
   document.getElementById('mPlan').classList.add('open');
+}
+
+function togglePlanAllDay() {
+  const allDay = document.getElementById('planAllDay').checked;
+  const row = document.getElementById('planTimeRow');
+  row.style.display = allDay ? 'none' : 'grid';
+  if (allDay) {
+    document.getElementById('planStart').value = '00:00';
+    document.getElementById('planEnd').value   = '23:59';
+  } else {
+    document.getElementById('planStart').value = '09:00';
+    document.getElementById('planEnd').value   = '10:00';
+  }
 }
 
 function rPlanCp() {
