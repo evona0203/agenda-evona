@@ -537,7 +537,7 @@ function openCfg(){document.getElementById('cfgU').value=backUrl;document.getEle
 function saveCfg(){backUrl=document.getElementById('cfgU').value.trim();curUser=document.getElementById('cfgN').value.trim();localStorage.setItem('ev_url',backUrl);localStorage.setItem('ev_user',curUser);cm('mCfg');updateSyncBar();if(backUrl)loadFromSheet();toast('Sauvegarde');render();}
 // ── OUTILS DE SYNC ──────────────────────────────────
 function forceSyncNow(){
-  if(!backUrl){ toast('Configurez d'abord l'URL Apps Script'); return; }
+  if(!backUrl){ toast('Configurez l\'URL Apps Script'); return; }
   syncBusy = false; // Libère le verrou si bloqué
   doSync();
   setTimeout(() => loadFromSheet(), 2000);
@@ -546,10 +546,8 @@ function forceSyncNow(){
 }
 
 function resetLocalData(){
-  if(!backUrl){ toast('Configurez d'abord l'URL Apps Script'); return; }
-  if(!confirm('Recharger toutes les données depuis Google Sheets ? Les données locales non synchronisées seront perdues.')) return;
+  if(!backUrl){ toast('Configurez l\'URL Apps Script'); return; }
   syncBusy = false;
-  // Vide le local et recharge depuis le Sheet
   events = []; todos = [];
   saveEvLocal(); saveTdLocal();
   loadFromSheet().then(() => {
@@ -557,19 +555,20 @@ function resetLocalData(){
     toast('Donnees rechargees depuis Google Sheets');
   });
   cm('mCfg');
+  toast('Rechargement depuis Google Sheets...');
 }
 
 function clearCache(){
-  if(!confirm('Vider le cache ? L'application se rechargera.')) return;
   if('serviceWorker' in navigator){
     caches.keys().then(keys => {
       Promise.all(keys.map(k => caches.delete(k))).then(() => {
         toast('Cache vide, rechargement...');
-        setTimeout(() => window.location.reload(true), 1000);
+        setTimeout(() => window.location.reload(true), 1500);
       });
     });
   } else {
-    window.location.reload(true);
+    toast('Rechargement...');
+    setTimeout(() => window.location.reload(true), 500);
   }
 }
 
