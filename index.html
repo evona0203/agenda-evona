@@ -438,7 +438,7 @@ async function loadFromSheet(){
     if(data.todos&&Array.isArray(data.todos)){const fromSheet=data.todos.filter(t=>t.id&&!deletedIds.has(String(t.id)));const sheetById={};fromSheet.forEach(t=>sheetById[t.id]=t);const localIds=new Set(todos.map(t=>t.id));const newItems=fromSheet.filter(t=>!localIds.has(t.id));let tdChanged=newItems.length>0;todos=todos.map(local=>{const remote=sheetById[local.id];if(!remote)return local;if(remote.done!==local.done||JSON.stringify(remote.claimedBy)!==JSON.stringify(local.claimedBy)){tdChanged=true;return{...local,done:remote.done,claimedBy:remote.claimedBy};}return local;});if(newItems.length>0)todos=[...todos,...newItems];if(tdChanged){saveTdLocal();changed=true;}}
     if(changed)render();
   }catch(e){
-    // Si échec, réessaie dans 10s
+    // Si \u00e9chec, r\u00e9essaie dans 10s
     setTimeout(loadFromSheet, 10000);
   }
 }
@@ -544,7 +544,7 @@ function saveCfg(){backUrl=document.getElementById('cfgU').value.trim();curUser=
 // -- OUTILS DE SYNC ----------------------------------
 function forceSyncNow(){
   if(!backUrl){ toast('Configurez l\'URL Apps Script'); return; }
-  syncBusy = false; // Libère le verrou si bloqué
+  syncBusy = false; // Lib\u00e8re le verrou si bloqu\u00e9
   doSync();
   setTimeout(() => loadFromSheet(), 2000);
   toast('Synchronisation en cours...');
@@ -578,7 +578,7 @@ function clearCache(){
   }
 }
 
-// Auto-récupération : si syncBusy est bloqué depuis plus de 20s, libère automatiquement
+// Auto-r\u00e9cup\u00e9ration : si syncBusy est bloqu\u00e9 depuis plus de 20s, lib\u00e8re automatiquement
 setInterval(() => {
   if(syncBusy && (Date.now() - _lastSyncAttempt > 20000)){
     syncBusy = false;
