@@ -13,7 +13,7 @@
 <title>Agenda Evona</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f0f13;--sf:#17171e;--sf2:#1e1e28;--bd:#2a2a38;--ac:#7c6aff;--ac2:#ff6a8a;--ac3:#6affd4;--ac4:#ffb86a;--tx:#e8e8f0;--tm:#7a7a96;--r:12px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);}
+:root{--bg:#f5f5f8;--sf:#ffffff;--sf2:#f0f0f5;--bd:#e2e2ea;--ac:#5046e5;--ac2:#db2777;--ac3:#059669;--ac4:#ea580c;--tx:#1a1a2e;--tm:#6b7280;--r:12px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overscroll-behavior:none;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overflow:hidden;}
@@ -26,18 +26,18 @@ header{display:flex;align-items:center;justify-content:space-between;padding:10p
 .vbtn.active{background:var(--ac);color:#fff;}
 .hdr-right{display:flex;gap:7px;align-items:center;flex-shrink:0;}
 .btn-cfg{background:var(--sf2);border:1px solid var(--bd);color:var(--tm);border-radius:9px;padding:7px 10px;cursor:pointer;font-size:1rem;line-height:1;}
-.btn-install{display:none;align-items:center;gap:5px;padding:7px 12px;background:var(--ac3);color:#0f0f13;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;white-space:nowrap;animation:pulse-install 2s infinite;}
-@keyframes pulse-install{0%,100%{box-shadow:0 0 0 0 rgba(106,255,212,.4)}50%{box-shadow:0 0 0 6px rgba(106,255,212,0)}}
+.btn-install{display:none;align-items:center;gap:5px;padding:7px 12px;background:var(--ac3);color:#fff;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;white-space:nowrap;animation:pulse-install 2s infinite;}
+@keyframes pulse-install{0%,100%{box-shadow:0 0 0 0 rgba(5,150,105,.35)}50%{box-shadow:0 0 0 6px rgba(5,150,105,0)}}
 .btn-install.show{display:flex;}
 .btn-add{display:flex;align-items:center;gap:5px;padding:8px 13px;background:var(--ac);color:#fff;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.82rem;cursor:pointer;white-space:nowrap;}
 /* Bandeau iOS */
-.ios-banner{display:none;background:rgba(106,255,212,.08);border-bottom:1px solid rgba(106,255,212,.25);color:var(--ac3);font-size:0.8rem;padding:10px 14px;flex-shrink:0;align-items:flex-start;gap:10px;}
+.ios-banner{display:none;background:rgba(5,150,105,.08);border-bottom:1px solid rgba(5,150,105,.2);color:#047857;font-size:0.8rem;padding:10px 14px;flex-shrink:0;align-items:flex-start;gap:10px;}
 .ios-banner.show{display:flex;}
 .ios-banner-txt{flex:1;line-height:1.5;}
-.ios-banner-close{background:none;border:none;color:var(--ac3);cursor:pointer;font-size:1.1rem;flex-shrink:0;margin-top:-2px;}
+.ios-banner-close{background:none;border:none;color:#047857;cursor:pointer;font-size:1.1rem;flex-shrink:0;margin-top:-2px;}
 /* Sync */
-.sync-bar{font-size:0.74rem;padding:5px 14px;display:flex;align-items:center;gap:6px;flex-shrink:0;background:rgba(255,200,0,.07);border-bottom:1px solid rgba(255,200,0,.2);color:#ffd060;}
-.sync-bar.ok{background:rgba(106,255,212,.07);border-color:rgba(106,255,212,.2);color:var(--ac3);}
+.sync-bar{font-size:0.74rem;padding:5px 14px;display:flex;align-items:center;gap:6px;flex-shrink:0;background:rgba(234,88,12,.07);border-bottom:1px solid rgba(234,88,12,.2);color:#c2410c;}
+.sync-bar.ok{background:rgba(5,150,105,.07);border-color:rgba(5,150,105,.2);color:#047857;}
 .sdot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
 .sdot.pulse{animation:pu 2s infinite;}
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
@@ -142,7 +142,7 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
 @media(max-width:680px){.tc{padding:10px 11px;gap:9px;}}
 .tchk{width:21px;height:21px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;margin-top:1px;transition:all .2s;font-size:0.7rem;}
 .tchk:hover{border-color:var(--ac3);}
-.tc.done .tchk{background:var(--ac3);border-color:var(--ac3);color:#0f0f13;}
+.tc.done .tchk{background:var(--ac3);border-color:var(--ac3);color:#fff;}
 .tb{flex:1;min-width:0;}
 .tct{font-weight:600;font-size:0.9rem;margin-bottom:3px;}
 .tcd{font-size:0.78rem;color:var(--tm);margin-bottom:7px;}
@@ -224,9 +224,9 @@ textarea{resize:vertical;min-height:58px;}
 .prsel{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;}
 .propt{padding:6px 14px;border-radius:20px;border:1.5px solid var(--bd);font-size:0.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--tm);transition:all .2s;user-select:none;}
 .propt:hover{border-color:var(--tx);color:var(--tx);}
-.propt.active.ph{background:var(--ac2);border-color:var(--ac2);color:#fff;font-weight:600;box-shadow:0 2px 10px rgba(255,106,138,.35);}
-.propt.active.pm{background:var(--ac4);border-color:var(--ac4);color:#0f0f13;font-weight:600;box-shadow:0 2px 10px rgba(255,184,106,.35);}
-.propt.active.pl{background:var(--ac3);border-color:var(--ac3);color:#0f0f13;font-weight:600;box-shadow:0 2px 10px rgba(106,255,212,.35);}
+.propt.active.ph{background:var(--ac2);border-color:var(--ac2);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(219,39,119,.25);}
+.propt.active.pm{background:var(--ac4);border-color:var(--ac4);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(234,88,12,.25);}
+.propt.active.pl{background:var(--ac3);border-color:var(--ac3);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(5,150,105,.25);}
 .chk-row{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;border-radius:10px;border:1.5px solid var(--bd);transition:border-color .15s;margin-bottom:13px;}
 .chk-row:hover{border-color:var(--ac);}
 .chk-row span{font-size:0.88rem;font-weight:500;color:var(--tx);flex:1;text-transform:none;letter-spacing:0;}
@@ -388,10 +388,10 @@ textarea{resize:vertical;min-height:58px;}
 </div></div>
 
 <script>
-const PERSONS=[{id:'p1',name:'Kevin',ini:'KB',color:'#7c6aff'},{id:'p2',name:'Antony',ini:'AR',color:'#ff6a8a'},{id:'p3',name:'Thibaud',ini:'TM',color:'#6affd4'}];
-const COLORS=['#7c6aff','#ff6a8a','#6affd4','#ffb86a','#6ab8ff','#ff9f6a','#c46aff'];
+const PERSONS=[{id:'p1',name:'Kevin',ini:'KB',color:'#5046e5'},{id:'p2',name:'Antony',ini:'AR',color:'#db2777'},{id:'p3',name:'Thibaud',ini:'TM',color:'#059669'}];
+const COLORS=['#5046e5','#db2777','#059669','#ea580c','#0284c7','#7c3aed','#0891b2'];
 const CATS={meeting:'Reunion',task:'Tache',deadline:'Deadline',other:'Autre'};
-const CATCOL={meeting:'#7c6aff',task:'#6affd4',deadline:'#ff6a8a',other:'#ffb86a'};
+const CATCOL={meeting:'#5046e5',task:'#059669',deadline:'#db2777',other:'#ea580c'};
 const HOUR_START=6,H_WEEK=48,H_DAY=60;
 
 let events=JSON.parse(localStorage.getItem('ev_ev')||'[]');
