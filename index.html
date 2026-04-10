@@ -541,7 +541,7 @@ function saveTodo(){const title=document.getElementById('tdT').value.trim();if(!
 
 function openCfg(){document.getElementById('cfgU').value=backUrl;document.getElementById('cfgN').value=curUser;document.getElementById('mCfg').classList.add('open');}
 function saveCfg(){backUrl=document.getElementById('cfgU').value.trim();curUser=document.getElementById('cfgN').value.trim();localStorage.setItem('ev_url',backUrl);localStorage.setItem('ev_user',curUser);cm('mCfg');updateSyncBar();if(backUrl)loadFromSheet();toast('Sauvegarde');render();}
-// ── OUTILS DE SYNC ──────────────────────────────────
+// -- OUTILS DE SYNC ----------------------------------
 function forceSyncNow(){
   if(!backUrl){ toast('Configurez l\'URL Apps Script'); return; }
   syncBusy = false; // Libère le verrou si bloqué
