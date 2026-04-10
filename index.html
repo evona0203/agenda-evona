@@ -405,10 +405,10 @@ function saveEvLocal(){localStorage.setItem('ev_ev',JSON.stringify(events));}
 function saveTdLocal(){localStorage.setItem('ev_td',JSON.stringify(todos));}
 function saveDelLocal(){localStorage.setItem('ev_del',JSON.stringify([...deletedIds]));}
 
-let syncBusy=false,syncTimer=null;
+let syncBusy=false,syncTimer=null,_lastSyncAttempt=0;
 function scheduleSync(){if(!backUrl)return;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(doSync,800);}
 function doSync(){
-  if(!backUrl||syncBusy)return;syncBusy=true;
+  if(!backUrl||syncBusy)return;syncBusy=true;_lastSyncAttempt=Date.now();
   const payload=JSON.stringify({events,todos,deleted:[...deletedIds]});
   fetch(backUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:payload})
     .then(()=>{syncBusy=false;}).catch(()=>{syncViaIframe(payload);syncBusy=false;});
@@ -431,7 +431,10 @@ async function loadFromSheet(){
     if(data.events&&Array.isArray(data.events)){const fromSheet=data.events.filter(e=>e.id&&!deletedIds.has(String(e.id)));const merged=mergeByUpdatedAt(events,fromSheet);if(JSON.stringify(merged)!==JSON.stringify(events)){events=merged;saveEvLocal();changed=true;}}
     if(data.todos&&Array.isArray(data.todos)){const fromSheet=data.todos.filter(t=>t.id&&!deletedIds.has(String(t.id)));const sheetById={};fromSheet.forEach(t=>sheetById[t.id]=t);const localIds=new Set(todos.map(t=>t.id));const newItems=fromSheet.filter(t=>!localIds.has(t.id));let tdChanged=newItems.length>0;todos=todos.map(local=>{const remote=sheetById[local.id];if(!remote)return local;if(remote.done!==local.done||JSON.stringify(remote.claimedBy)!==JSON.stringify(local.claimedBy)){tdChanged=true;return{...local,done:remote.done,claimedBy:remote.claimedBy};}return local;});if(newItems.length>0)todos=[...todos,...newItems];if(tdChanged){saveTdLocal();changed=true;}}
     if(changed)render();
-  }catch(e){}
+  }catch(e){
+    // Si échec, réessaie dans 10s
+    setTimeout(loadFromSheet, 10000);
+  }
 }
 function mergeByUpdatedAt(local,remote){const map={};local.forEach(e=>map[e.id]=e);remote.forEach(e=>{if(!map[e.id])map[e.id]=e;else if((e.updatedAt||'')>(map[e.id].updatedAt||''))map[e.id]=e;});return Object.values(map).filter(e=>!deletedIds.has(String(e.id)));}
 
@@ -532,6 +535,51 @@ function saveTodo(){const title=document.getElementById('tdT').value.trim();if(!
 
 function openCfg(){document.getElementById('cfgU').value=backUrl;document.getElementById('cfgN').value=curUser;document.getElementById('mCfg').classList.add('open');}
 function saveCfg(){backUrl=document.getElementById('cfgU').value.trim();curUser=document.getElementById('cfgN').value.trim();localStorage.setItem('ev_url',backUrl);localStorage.setItem('ev_user',curUser);cm('mCfg');updateSyncBar();if(backUrl)loadFromSheet();toast('Sauvegarde');render();}
+// ── OUTILS DE SYNC ──────────────────────────────────
+function forceSyncNow(){
+  if(!backUrl){ toast('Configurez d'abord l'URL Apps Script'); return; }
+  syncBusy = false; // Libère le verrou si bloqué
+  doSync();
+  setTimeout(() => loadFromSheet(), 2000);
+  toast('Synchronisation en cours...');
+  cm('mCfg');
+}
+
+function resetLocalData(){
+  if(!backUrl){ toast('Configurez d'abord l'URL Apps Script'); return; }
+  if(!confirm('Recharger toutes les données depuis Google Sheets ? Les données locales non synchronisées seront perdues.')) return;
+  syncBusy = false;
+  // Vide le local et recharge depuis le Sheet
+  events = []; todos = [];
+  saveEvLocal(); saveTdLocal();
+  loadFromSheet().then(() => {
+    render();
+    toast('Donnees rechargees depuis Google Sheets');
+  });
+  cm('mCfg');
+}
+
+function clearCache(){
+  if(!confirm('Vider le cache ? L'application se rechargera.')) return;
+  if('serviceWorker' in navigator){
+    caches.keys().then(keys => {
+      Promise.all(keys.map(k => caches.delete(k))).then(() => {
+        toast('Cache vide, rechargement...');
+        setTimeout(() => window.location.reload(true), 1000);
+      });
+    });
+  } else {
+    window.location.reload(true);
+  }
+}
+
+// Auto-récupération : si syncBusy est bloqué depuis plus de 20s, libère automatiquement
+setInterval(() => {
+  if(syncBusy && (Date.now() - _lastSyncAttempt > 20000)){
+    syncBusy = false;
+  }
+}, 5000);
+
 function updateSyncBar(){const bar=document.getElementById('syncBar'),dot=document.getElementById('sdot'),txt=document.getElementById('syncTxt');if(backUrl){bar.className='sync-bar ok';dot.className='sdot pulse';txt.textContent='Sync active'+(curUser?' - '+curUser:'');bar.querySelector('button').textContent='Modifier';}else{bar.className='sync-bar';dot.className='sdot';txt.textContent='Mode local';}}
 
 ['mEv','mDt','mTd','mCfg','mPlan'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===e.currentTarget)cm(id);});});
