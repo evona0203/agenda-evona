@@ -127,6 +127,23 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
 .dtm{opacity:.7;font-size:0.7rem;margin-top:2px;}
 .dpp{margin-top:3px;display:flex;gap:3px;}
 .dav{width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.52rem;font-weight:700;border:1.5px solid rgba(255,255,255,.2);}
+/* Carte event vue jour (mode liste) */
+.day-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%;color:var(--tm);font-size:0.9rem;padding:40px;}
+.day-empty-ic{font-size:2.5rem;}
+.dev-card{background:var(--sf);border:1.5px solid var(--bd);border-radius:14px;padding:14px 16px;margin:0 12px 10px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;transition:border-color .2s;}
+.dev-card:hover{border-color:var(--ac);}
+.dev-time{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;min-width:42px;}
+.dev-time-start{font-weight:700;font-size:0.88rem;color:var(--tx);}
+.dev-time-end{font-size:0.75rem;color:var(--tm);}
+.dev-bar{width:3px;flex:1;border-radius:2px;min-height:30px;flex-shrink:0;}
+.dev-body{flex:1;min-width:0;}
+.dev-title{font-weight:700;font-size:0.92rem;margin-bottom:3px;}
+.dev-desc{font-size:0.78rem;color:var(--tm);margin-bottom:6px;}
+.dev-persons{display:flex;gap:5px;flex-wrap:wrap;}
+.dev-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.58rem;font-weight:700;}
+.dev-cat{font-size:0.68rem;font-weight:600;padding:2px 7px;border-radius:5px;text-transform:uppercase;}
+.dev-add{display:flex;align-items:center;justify-content:center;margin:0 12px 10px;padding:12px;border:1.5px dashed var(--bd);border-radius:14px;cursor:pointer;color:var(--tm);font-size:0.85rem;gap:7px;transition:all .2s;}
+.dev-add:hover{border-color:var(--ac);color:var(--ac);}
 .tv{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:16px;}
 @media(max-width:680px){.tv{padding:10px;gap:12px;}}
 .ttb{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
@@ -521,7 +538,52 @@ function calcLayout(evs){
 }
 function rWeek(c){const mon=monday(cd),days=Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(d.getDate()+i);return d;});const fe=fEv(),dn=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];const hours=Array.from({length:24-HOUR_START},(_,i)=>i+HOUR_START);let h=`<div class="wv"><div class="wkh"><div></div>${days.map((d,i)=>`<div class="wkd${isT(d)?' today':''}"><div class="wd">${dn[i]}</div><div class="wn">${d.getDate()}</div></div>`).join('')}</div><div class="wb"><div class="wtc">${hours.map(h=>`<div class="wts">${String(h).padStart(2,'0')}h</div>`).join('')}</div><div class="wdg">${days.map(d=>{const ds=fd(d);let de=fe.filter(e=>e.date===ds);if(de.length>1) calcLayout(de);const li=hours.map(()=>'<div class="whl"></div>').join('');const bl=de.map(e=>{const[sh,sm]=e.start.split(':').map(Number),[eh,em]=e.end.split(':').map(Number);const top=(sh-HOUR_START)*H_WEEK+(sm/60)*H_WEEK,ht=((eh*60+em)-(sh*60+sm))/60*H_WEEK;const total=e._total||1,col=e._col||0;const w=100/total;const left=col*w;return `<div class="wtb" style="background:${e.color}33;color:${e.color};border-left:3px solid ${e.color};top:${top}px;height:${Math.max(ht,20)}px;left:${left}%;width:${w}%;right:auto" onclick="showDt('${e.id}')"><div class="wtt">${e.title}</div><div class="wtm">${e.start}-${e.end}</div></div>`;}).join('');return `<div class="wdc" ondblclick="openEvModal('${ds}')">${li}${bl}</div>`;}).join('')}</div></div></div>`;c.innerHTML=h;}
 
-function rDay(c){const ds=fd(cd);let fe=fEv().filter(e=>e.date===ds);if(fe.length>1) calcLayout(fe);const hours=Array.from({length:24-HOUR_START},(_,i)=>i+HOUR_START);let h=`<div class="dv"><div class="db"><div class="dtc">${hours.map(h=>`<div class="dts">${String(h).padStart(2,'0')}h</div>`).join('')}</div><div class="dec" ondblclick="openEvModal('${ds}')">` + hours.map(()=>'<div class="dhl"></div>').join('') + fe.map(e=>{const[sh,sm]=e.start.split(':').map(Number),[eh,em]=e.end.split(':').map(Number);const top=(sh-HOUR_START)*H_DAY+(sm/60)*H_DAY,ht=((eh*60+em)-(sh*60+sm))/60*H_DAY;const ppl=(e.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dav" style="background:${p.color}33;color:${p.color}">${p.ini}</div>`:''}).join('');const total=e._total||1,col=e._col||0;const w=100/total;const left=col*w;const rpad=4+((total-col-1)*2);return `<div class="dtb" style="background:${e.color}22;border-left:4px solid ${e.color};top:${top}px;height:${Math.max(ht,30)}px;left:calc(${left}% + 8px);width:calc(${w}% - 14px);right:auto" onclick="showDt('${e.id}')"><div class="dti" style="color:${e.color}">${e.title}</div><div class="dtm" style="color:${e.color}">${e.start}-${e.end}</div><div class="dpp">${ppl}</div></div>`;}).join('') + `</div></div></div>`;c.innerHTML=h;}
+function rDay(c){
+  const ds=fd(cd);
+  let fe=fEv().filter(e=>e.date===ds);
+  if(fe.length>1) calcLayout(fe);
+
+  // Trie par heure de debut
+  fe.sort((a,b)=>{
+    const ta=a.start.split(':').map(Number);
+    const tb=b.start.split(':').map(Number);
+    return (ta[0]*60+ta[1])-(tb[0]*60+tb[1]);
+  });
+
+  const dateLabel = pd(ds).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+
+  if(fe.length===0){
+    c.innerHTML=`<div class="dv"><div style="padding:14px 12px 4px;font-size:0.75rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;">${dateLabel}</div>
+      <div class="day-empty"><div class="day-empty-ic">&#128197;</div>Aucune tache ce jour<button onclick="openEvModal('${ds}')" style="padding:8px 18px;border-radius:var(--r);border:1.5px solid var(--ac);background:transparent;color:var(--ac);font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;">+ Ajouter</button></div>
+    </div>`;
+    return;
+  }
+
+  let cards = fe.map(e=>{
+    const ppl=(e.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dev-av" style="background:${p.color}22;color:${p.color}">${p.ini}</div>`:''}).join('');
+    const catLabel={'meeting':'R\u00e9union','task':'T\u00e2che','deadline':'Deadline','other':'Autre'}[e.cat]||e.cat;
+    return `<div class="dev-card" onclick="showDt('${e.id}')">
+      <div class="dev-time">
+        <span class="dev-time-start">${e.start}</span>
+        <div class="dev-bar" style="background:${e.color}"></div>
+        <span class="dev-time-end">${e.end}</span>
+      </div>
+      <div class="dev-body">
+        <div class="dev-title" style="color:${e.color}">${e.title}</div>
+        ${e.desc?`<div class="dev-desc">${e.desc}</div>`:''}
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span class="dev-cat" style="background:${e.color}18;color:${e.color}">${catLabel}</span>
+          <div class="dev-persons">${ppl}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  c.innerHTML=`<div class="dv"><div style="padding:14px 12px 8px;font-size:0.75rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;">${dateLabel}</div>
+    <div style="overflow-y:auto;flex:1;">${cards}
+    <div class="dev-add" onclick="openEvModal('${ds}')">+ Ajouter une t\u00e2che</div>
+    </div></div>`;
+}
 
 function rTodo(c){let f=todos;if(tdFilter==='done')f=todos.filter(t=>t.done);else if(tdFilter==='todo')f=todos.filter(t=>!t.done);else if(tdFilter==='mine'&&curUser){const mp=PERSONS.find(p=>p.name.toLowerCase()===curUser.toLowerCase());if(mp)f=todos.filter(t=>t.claimedBy&&t.claimedBy.includes(mp.id));}if(fp.length)f=f.filter(t=>(t.persons&&t.persons.some(p=>fp.includes(p)))||(t.claimedBy&&t.claimedBy.some(p=>fp.includes(p))));const pen=f.filter(t=>!t.done),don=f.filter(t=>t.done);let h=`<div class="tv"><div class="ttb"><button class="tfbtn${tdFilter==='all'?' active':''}" onclick="setTF('all')">Toutes</button><button class="tfbtn${tdFilter==='todo'?' active':''}" onclick="setTF('todo')">A faire</button><button class="tfbtn${tdFilter==='done'?' active':''}" onclick="setTF('done')">Terminees</button>${curUser?`<button class="tfbtn${tdFilter==='mine'?' active':''}" onclick="setTF('mine')">Les miennes</button>`:''}</div>`;if(!pen.length&&!don.length)h+=`<div class="t-empty"><div class="t-empty-i">&#127881;</div>Aucune tache ici</div>`;if(pen.length)h+=`<div><div class="tsec">A faire <span class="tcnt">${pen.length}</span></div><div class="tlist">${pen.map(tdCard).join('')}</div></div>`;if(don.length)h+=`<div><div class="tsec">Terminees <span class="tcnt">${don.length}</span></div><div class="tlist">${don.map(tdCard).join('')}</div></div>`;h+='</div>';c.innerHTML=h;}
 function setTF(f){tdFilter=f;render();}
