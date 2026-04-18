@@ -503,9 +503,25 @@ function renderFD(){const el=document.getElementById('fdwList');el.innerHTML=`<d
 
 function rMonth(c){const y=cd.getFullYear(),m=cd.getMonth(),fi=new Date(y,m,1),la=new Date(y,m+1,0),sd=(fi.getDay()+6)%7;const fe=fEv();const dn=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];let h=`<div class="mv"><div class="mh">${dn.map(d=>`<div class="mhc">${d}</div>`).join('')}</div><div class="mg">`;const pl=new Date(y,m,0);for(let i=sd-1;i>=0;i--)h+=`<div class="mc om"><div class="dn2">${pl.getDate()-i}</div></div>`;for(let d=1;d<=la.getDate();d++){const dd=new Date(y,m,d),ds=fd(dd),de=fe.filter(e=>e.date===ds);h+=`<div class="mc${isT(dd)?' today':''}" onclick="jd(${y},${m},${d})"><div class="dn2">${d}</div>`;de.slice(0,3).forEach(e=>h+=`<div class="tp" style="background:${e.color}33;color:${e.color}" onclick="event.stopPropagation();showDt('${e.id}')"><div class="tp-dot"></div>${e.title}</div>`);if(de.length>3)h+=`<div class="more-t">+${de.length-3}</div>`;h+='</div>';}const rem=(7-(sd+la.getDate())%7)%7;for(let d=1;d<=rem;d++)h+=`<div class="mc om"><div class="dn2">${d}</div></div>`;h+='</div></div>';c.innerHTML=h;}
 
-function rWeek(c){const mon=monday(cd),days=Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(d.getDate()+i);return d;});const fe=fEv(),dn=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];const hours=Array.from({length:24-HOUR_START},(_,i)=>i+HOUR_START);let h=`<div class="wv"><div class="wkh"><div></div>${days.map((d,i)=>`<div class="wkd${isT(d)?' today':''}"><div class="wd">${dn[i]}</div><div class="wn">${d.getDate()}</div></div>`).join('')}</div><div class="wb"><div class="wtc">${hours.map(h=>`<div class="wts">${String(h).padStart(2,'0')}h</div>`).join('')}</div><div class="wdg">${days.map(d=>{const ds=fd(d),de=fe.filter(e=>e.date===ds);const li=hours.map(()=>'<div class="whl"></div>').join('');const bl=de.map(e=>{const[sh,sm]=e.start.split(':').map(Number),[eh,em]=e.end.split(':').map(Number);const top=(sh-HOUR_START)*H_WEEK+(sm/60)*H_WEEK,ht=((eh*60+em)-(sh*60+sm))/60*H_WEEK;return `<div class="wtb" style="background:${e.color}33;color:${e.color};border-left:3px solid ${e.color};top:${top}px;height:${Math.max(ht,20)}px" onclick="showDt('${e.id}')"><div class="wtt">${e.title}</div><div class="wtm">${e.start}-${e.end}</div></div>`;}).join('');return `<div class="wdc" ondblclick="openEvModal('${ds}')">${li}${bl}</div>`;}).join('')}</div></div></div>`;c.innerHTML=h;}
+function calcLayout(evs){
+  // Attribue colonne et largeur pour eviter chevauchement
+  const cols=[];
+  evs.forEach(e=>{
+    const[sh,sm]=e.start.split(':').map(Number);
+    const[eh,em]=e.end.split(':').map(Number);
+    const s=sh*60+sm, en=eh*60+em;
+    let col=0;
+    while(cols[col]&&cols[col]>s) col++;
+    cols[col]=en;
+    e._col=col; e._total=0;
+  });
+  const maxCol=Math.max(...evs.map(e=>e._col))+1;
+  evs.forEach(e=>e._total=maxCol);
+  return evs;
+}
+function rWeek(c){const mon=monday(cd),days=Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(d.getDate()+i);return d;});const fe=fEv(),dn=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];const hours=Array.from({length:24-HOUR_START},(_,i)=>i+HOUR_START);let h=`<div class="wv"><div class="wkh"><div></div>${days.map((d,i)=>`<div class="wkd${isT(d)?' today':''}"><div class="wd">${dn[i]}</div><div class="wn">${d.getDate()}</div></div>`).join('')}</div><div class="wb"><div class="wtc">${hours.map(h=>`<div class="wts">${String(h).padStart(2,'0')}h</div>`).join('')}</div><div class="wdg">${days.map(d=>{const ds=fd(d);let de=fe.filter(e=>e.date===ds);if(de.length>1) calcLayout(de);const li=hours.map(()=>'<div class="whl"></div>').join('');const bl=de.map(e=>{const[sh,sm]=e.start.split(':').map(Number),[eh,em]=e.end.split(':').map(Number);const top=(sh-HOUR_START)*H_WEEK+(sm/60)*H_WEEK,ht=((eh*60+em)-(sh*60+sm))/60*H_WEEK;const total=e._total||1,col=e._col||0;const w=100/total;const left=col*w;return `<div class="wtb" style="background:${e.color}33;color:${e.color};border-left:3px solid ${e.color};top:${top}px;height:${Math.max(ht,20)}px;left:${left}%;width:${w}%;right:auto" onclick="showDt('${e.id}')"><div class="wtt">${e.title}</div><div class="wtm">${e.start}-${e.end}</div></div>`;}).join('');return `<div class="wdc" ondblclick="openEvModal('${ds}')">${li}${bl}</div>`;}).join('')}</div></div></div>`;c.innerHTML=h;}
 
-function rDay(c){const ds=fd(cd),fe=fEv().filter(e=>e.date===ds);const hours=Array.from({length:24-HOUR_START},(_,i)=>i+HOUR_START);let h=`<div class="dv"><div class="db"><div class="dtc">${hours.map(h=>`<div class="dts">${String(h).padStart(2,'0')}h</div>`).join('')}</div><div class="dec" ondblclick="openEvModal('${ds}')">${hours.map(()=>'<div class="dhl"></div>').join('')}${fe.map(e=>{const[sh,sm]=e.start.split(':').map(Number),[eh,em]=e.end.split(':').map(Number);const top=(sh-HOUR_START)*H_DAY+(sm/60)*H_DAY,ht=((eh*60+em)-(sh*60+sm))/60*H_DAY;const ppl=(e.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dav" style="background:${p.color}33;color:${p.color}">${p.ini}</div>`:''}).join('');return `<div class="dtb" style="background:${e.color}22;border-left:4px solid ${e.color};top:${top}px;height:${Math.max(ht,30)}px" onclick="showDt('${e.id}')"><div class="dti" style="color:${e.color}">${e.title}</div><div class="dtm" style="color:${e.color}">${e.start}-${e.end}</div><div class="dpp">${ppl}</div></div>`;}).join('')}</div></div></div>`;c.innerHTML=h;}
+function rDay(c){const ds=fd(cd);let fe=fEv().filter(e=>e.date===ds);if(fe.length>1) calcLayout(fe);const hours=Array.from({length:24-HOUR_START},(_,i)=>i+HOUR_START);let h=`<div class="dv"><div class="db"><div class="dtc">${hours.map(h=>`<div class="dts">${String(h).padStart(2,'0')}h</div>`).join('')}</div><div class="dec" ondblclick="openEvModal('${ds}')">` + hours.map(()=>'<div class="dhl"></div>').join('') + fe.map(e=>{const[sh,sm]=e.start.split(':').map(Number),[eh,em]=e.end.split(':').map(Number);const top=(sh-HOUR_START)*H_DAY+(sm/60)*H_DAY,ht=((eh*60+em)-(sh*60+sm))/60*H_DAY;const ppl=(e.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dav" style="background:${p.color}33;color:${p.color}">${p.ini}</div>`:''}).join('');const total=e._total||1,col=e._col||0;const w=100/total;const left=col*w;const rpad=4+((total-col-1)*2);return `<div class="dtb" style="background:${e.color}22;border-left:4px solid ${e.color};top:${top}px;height:${Math.max(ht,30)}px;left:calc(${left}% + 8px);width:calc(${w}% - 14px);right:auto" onclick="showDt('${e.id}')"><div class="dti" style="color:${e.color}">${e.title}</div><div class="dtm" style="color:${e.color}">${e.start}-${e.end}</div><div class="dpp">${ppl}</div></div>`;}).join('') + `</div></div></div>`;c.innerHTML=h;}
 
 function rTodo(c){let f=todos;if(tdFilter==='done')f=todos.filter(t=>t.done);else if(tdFilter==='todo')f=todos.filter(t=>!t.done);else if(tdFilter==='mine'&&curUser){const mp=PERSONS.find(p=>p.name.toLowerCase()===curUser.toLowerCase());if(mp)f=todos.filter(t=>t.claimedBy&&t.claimedBy.includes(mp.id));}if(fp.length)f=f.filter(t=>(t.persons&&t.persons.some(p=>fp.includes(p)))||(t.claimedBy&&t.claimedBy.some(p=>fp.includes(p))));const pen=f.filter(t=>!t.done),don=f.filter(t=>t.done);let h=`<div class="tv"><div class="ttb"><button class="tfbtn${tdFilter==='all'?' active':''}" onclick="setTF('all')">Toutes</button><button class="tfbtn${tdFilter==='todo'?' active':''}" onclick="setTF('todo')">A faire</button><button class="tfbtn${tdFilter==='done'?' active':''}" onclick="setTF('done')">Terminees</button>${curUser?`<button class="tfbtn${tdFilter==='mine'?' active':''}" onclick="setTF('mine')">Les miennes</button>`:''}</div>`;if(!pen.length&&!don.length)h+=`<div class="t-empty"><div class="t-empty-i">&#127881;</div>Aucune tache ici</div>`;if(pen.length)h+=`<div><div class="tsec">A faire <span class="tcnt">${pen.length}</span></div><div class="tlist">${pen.map(tdCard).join('')}</div></div>`;if(don.length)h+=`<div><div class="tsec">Terminees <span class="tcnt">${don.length}</span></div><div class="tlist">${don.map(tdCard).join('')}</div></div>`;h+='</div>';c.innerHTML=h;}
 function setTF(f){tdFilter=f;render();}
@@ -594,6 +610,34 @@ if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(
 updateSyncBar();
 if(backUrl){loadFromSheet();setInterval(loadFromSheet,30000);}
 render();
+// -- SWIPE NAVIGATION --
+(function(){
+  var startX=0, startY=0, startT=0;
+  var el = document.querySelector('.body-area') || document.body;
+
+  el.addEventListener('touchstart', function(e){
+    var t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+    startT = Date.now();
+  }, {passive: true});
+
+  el.addEventListener('touchend', function(e){
+    var t = e.changedTouches[0];
+    var dx = t.clientX - startX;
+    var dy = t.clientY - startY;
+    var dt = Date.now() - startT;
+    // Swipe valide : rapide, horizontal, assez long
+    if(dt > 500) return;           // trop lent
+    if(Math.abs(dy) > Math.abs(dx)) return; // vertical = scroll
+    if(Math.abs(dx) < 50) return;  // trop court
+    // Ne pas swiper si on est dans la vue todo
+    if(view === 'todo') return;
+    if(dx < 0) navigate(1);   // swipe gauche = suivant
+    else navigate(-1);         // swipe droite = precedent
+  }, {passive: true});
+})();
+
 </script>
 </body>
 </html>
