@@ -149,6 +149,12 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
 .wk-ev-av{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.45rem;font-weight:700;}
 .wk-add{text-align:center;font-size:0.68rem;color:var(--tm);padding:5px 3px;cursor:pointer;border:1px dashed var(--bd);border-radius:7px;margin-top:3px;transition:all .15s;}
 .wk-add:hover{border-color:var(--ac);color:var(--ac);}
+.wk-ev-mini[draggable=true]{cursor:grab;user-select:none;-webkit-user-select:none;}
+.wk-ev-mini.dragging{opacity:0.28;transform:scale(0.96);}
+.wk-col-drop{transition:background .15s;}
+.wk-col-drop.drag-over{background:rgba(80,70,229,.09);outline:2px dashed var(--ac);outline-offset:-4px;border-radius:0 0 10px 10px;}
+.td-ghost{position:fixed;pointer-events:none;z-index:9999;border-radius:8px;box-shadow:0 10px 32px rgba(0,0,0,.35);opacity:.88;background:var(--sf);border:1px solid var(--bd);padding:5px 7px 5px 12px;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.drag-hint{text-align:center;font-size:0.6rem;color:var(--tm);padding:3px;opacity:.6;margin-top:2px;}
 .wk-empty{text-align:center;font-size:0.65rem;color:var(--tm);padding:8px 2px;opacity:.6;}
 /* Carte event vue jour (mode liste) */
 .day-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%;color:var(--tm);font-size:0.9rem;padding:40px;}
@@ -279,6 +285,32 @@ textarea{resize:vertical;min-height:58px;}
 .toast.show{transform:translateY(0);opacity:1;}
 @media(min-width:680px){.toast{bottom:22px;right:22px;}}
 ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px;}
+/* TOOLTIP SURVOL */
+#evTip{position:fixed;z-index:500;background:var(--sf);border:1.5px solid var(--bd);border-radius:14px;padding:13px 15px;width:240px;box-shadow:0 8px 32px rgba(0,0,0,.16);pointer-events:none;opacity:0;visibility:hidden;transition:opacity .18s,transform .18s;transform:translateY(5px);}
+#evTip.show{opacity:1;visibility:visible;transform:translateY(0);}
+.evtip-title{font-weight:700;font-size:0.92rem;margin-bottom:6px;line-height:1.3;}
+.evtip-row{font-size:0.74rem;color:var(--tm);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+.evtip-cat{font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase;display:inline-flex;align-items:center;margin-bottom:7px;}
+.evtip-avs{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:5px;}
+.evtip-desc{font-size:0.76rem;color:var(--tm);line-height:1.45;border-top:1px solid var(--bd);padding-top:8px;margin-top:6px;}
+@media(max-width:680px){#evTip{display:none!important;}}
+/* GESTION PERSONNES */
+.pers-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;border:1px solid var(--bd);margin-bottom:7px;transition:border-color .15s;}
+.pers-item:hover{border-color:var(--ac);}
+.pers-av-lg{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.74rem;font-weight:700;flex-shrink:0;}
+.pers-info{flex:1;min-width:0;}
+.pers-nm{font-size:0.88rem;font-weight:600;}
+.pers-in{font-size:0.7rem;color:var(--tm);}
+.pers-edt{background:var(--sf2);border:1px solid var(--bd);color:var(--tm);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:0.76rem;font-family:'DM Sans',sans-serif;}
+.pers-del2{background:rgba(219,39,119,.08);border:1px solid rgba(219,39,119,.2);color:var(--ac2);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:0.76rem;font-family:'DM Sans',sans-serif;}
+.pers-form{background:var(--sf2);border-radius:13px;padding:14px;margin-top:10px;border:1.5px solid var(--ac);}
+.pers-form label{display:block;font-size:0.7rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;}
+.btn-add-pers{width:100%;padding:11px;border:1.5px dashed var(--bd);border-radius:10px;background:transparent;color:var(--tm);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.85rem;transition:all .15s;margin-top:4px;}
+.btn-add-pers:hover{border-color:var(--ac);color:var(--ac);}
+.pers-preview{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;margin:0 auto 10px;transition:all .2s;}
+input[type=color].cpick{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;padding:0;background:none;transition:transform .15s;}
+input[type=color].cpick:hover{transform:scale(1.1);}
+input[type=color].cpick.sel{border-color:#fff;box-shadow:0 0 0 2px var(--ac);}
 </style>
 </head>
 <body>
@@ -341,6 +373,13 @@ textarea{resize:vertical;min-height:58px;}
 </div>
 
 <div class="toast" id="toast"></div>
+<div id="evTip">
+  <div class="evtip-title" id="evTipTitle"></div>
+  <div class="evtip-row" id="evTipTime"></div>
+  <div><span class="evtip-cat" id="evTipCat"></span></div>
+  <div class="evtip-avs" id="evTipAvs"></div>
+  <div class="evtip-desc" id="evTipDesc"></div>
+</div>
 
 <div class="fbd" id="fbd" onclick="closeFilter()"></div>
 <div class="fdw" id="fdw">
@@ -430,6 +469,7 @@ textarea{resize:vertical;min-height:58px;}
   <div class="fg"><label>URL Apps Script</label><input type="text" id="cfgU" placeholder="https://script.google.com/macros/s/.../exec"></div>
   <div class="fg"><label>Mon prenom</label><input type="text" id="cfgN" placeholder="Ex : Kevin"></div>
   <div class="fax"><button class="bcnl" onclick="cm('mCfg')">Annuler</button><button class="bsav" onclick="saveCfg()">Enregistrer</button></div>
+  <button onclick="cm('mCfg');openPersMgr()" style="width:100%;margin-top:13px;padding:10px 14px;border-radius:var(--r);border:1.5px solid var(--bd);background:transparent;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;">&#128101; G&#233;rer les personnes</button>
   <div style="border-top:1.5px solid var(--bd);margin-top:18px;padding-top:16px;display:flex;flex-direction:column;gap:9px;">
     <p style="color:var(--tm);font-size:0.76rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Outils de synchronisation</p>
     <button onclick="forceSyncNow()" style="padding:10px 14px;border-radius:var(--r);border:1.5px solid var(--ac);background:transparent;color:var(--ac);font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;font-weight:500;text-align:left;">&#8635; Forcer la synchronisation</button>
@@ -438,8 +478,16 @@ textarea{resize:vertical;min-height:58px;}
   </div>
 </div></div>
 
+<!-- MODAL PERSONNES -->
+<div class="mbd" id="mPers"><div class="modal">
+  <div class="mhandle"></div>
+  <div class="mtitle">&#128101; Personnes<button class="mclose" onclick="cm('mPers')">&#10005;</button></div>
+  <div id="persList"></div>
+</div></div>
+
 <script>
-const PERSONS=[{id:'p1',name:'Kevin',ini:'KB',color:'#5046e5'},{id:'p2',name:'Antony',ini:'AR',color:'#db2777'},{id:'p3',name:'Thibaud',ini:'TM',color:'#059669'}];
+const DEFAULT_PERSONS=[{id:'p1',name:'Kevin',ini:'KB',color:'#5046e5'},{id:'p2',name:'Antony',ini:'AR',color:'#db2777'},{id:'p3',name:'Thibaud',ini:'TM',color:'#059669'}];
+let PERSONS=JSON.parse(localStorage.getItem('ev_persons')||JSON.stringify(DEFAULT_PERSONS));
 const COLORS=['#5046e5','#db2777','#059669','#ea580c','#0284c7','#7c3aed','#0891b2'];
 const CATS={meeting:'Reunion',task:'Tache',deadline:'Deadline',other:'Autre'};
 const CATCOL={meeting:'#5046e5',task:'#059669',deadline:'#db2777',other:'#ea580c'};
@@ -553,7 +601,7 @@ function openFilter(){renderFD();document.getElementById('fbd').classList.add('o
 function closeFilter(){document.getElementById('fbd').classList.remove('open');document.getElementById('fdw').classList.remove('open');}
 function renderFD(){const el=document.getElementById('fdwList');el.innerHTML=`<div class="fdw-all${!fp.length?' active':''}" onclick="faAll()">&#128101; Toutes les personnes</div>`;PERSONS.forEach(p=>{const a=fp.includes(p.id);el.innerHTML+=`<div class="fdw-chip${a?' active':''}" onclick="fTog('${p.id}')"><div class="fdw-av" style="background:${p.color}22;color:${p.color}">${p.ini}</div><span class="fdw-name">${p.name}</span><div class="fdw-ck">${a?'&#10003;':''}</div></div>`;});}
 
-function rMonth(c){const y=cd.getFullYear(),m=cd.getMonth(),fi=new Date(y,m,1),la=new Date(y,m+1,0),sd=(fi.getDay()+6)%7;const fe=fEv();const dn=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];let h=`<div class="mv"><div class="mh">${dn.map(d=>`<div class="mhc">${d}</div>`).join('')}</div><div class="mg">`;const pl=new Date(y,m,0);for(let i=sd-1;i>=0;i--)h+=`<div class="mc om"><div class="dn2">${pl.getDate()-i}</div></div>`;for(let d=1;d<=la.getDate();d++){const dd=new Date(y,m,d),ds=fd(dd),de=fe.filter(e=>e.date===ds);h+=`<div class="mc${isT(dd)?' today':''}" onclick="jd(${y},${m},${d})"><div class="dn2">${d}</div>`;de.slice(0,3).forEach(e=>h+=`<div class="tp" style="background:${evBgGrad(e,.2)};color:${evFirst(e)}" onclick="event.stopPropagation();showDt('${e.id}')"><div class="tp-dot"></div>${e.title}</div>`);if(de.length>3)h+=`<div class="more-t">+${de.length-3}</div>`;h+='</div>';}const rem=(7-(sd+la.getDate())%7)%7;for(let d=1;d<=rem;d++)h+=`<div class="mc om"><div class="dn2">${d}</div></div>`;h+='</div></div>';c.innerHTML=h;}
+function rMonth(c){const y=cd.getFullYear(),m=cd.getMonth(),fi=new Date(y,m,1),la=new Date(y,m+1,0),sd=(fi.getDay()+6)%7;const fe=fEv();const dn=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];let h=`<div class="mv"><div class="mh">${dn.map(d=>`<div class="mhc">${d}</div>`).join('')}</div><div class="mg">`;const pl=new Date(y,m,0);for(let i=sd-1;i>=0;i--)h+=`<div class="mc om"><div class="dn2">${pl.getDate()-i}</div></div>`;for(let d=1;d<=la.getDate();d++){const dd=new Date(y,m,d),ds=fd(dd),de=fe.filter(e=>e.date===ds);h+=`<div class="mc${isT(dd)?' today':''}" onclick="jd(${y},${m},${d})"><div class="dn2">${d}</div>`;de.slice(0,3).forEach(e=>h+=`<div class="tp" style="background:${evBgGrad(e,.2)};color:${evFirst(e)}" onclick="event.stopPropagation();showDt('${e.id}')" onmouseenter="showEvTip(event,'${e.id}')" onmouseleave="hideEvTip()"><div class="tp-dot"></div>${e.title}</div>`);if(de.length>3)h+=`<div class="more-t">+${de.length-3}</div>`;h+='</div>';}const rem=(7-(sd+la.getDate())%7)%7;for(let d=1;d<=rem;d++)h+=`<div class="mc om"><div class="dn2">${d}</div></div>`;h+='</div></div>';c.innerHTML=h;}
 
 function calcLayout(evs){
   const cols=[];
@@ -588,7 +636,14 @@ function rWeek(c){
 
     const cards = evs.map(e=>{
       const ppl=(e.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="wk-ev-av" style="background:${p.color}22;color:${p.color}">${p.ini}</div>`:''}).join('');
-      return `<div class="wk-ev-mini" style="background:${evBgGrad(e,.1)}" onclick="showDt('${e.id}')">
+      return `<div class="wk-ev-mini" data-ev-id="${e.id}" draggable="true" style="background:${evBgGrad(e,.1)}"
+        onclick="if(!_dndMoved)showDt('${e.id}');_dndMoved=false;"
+        onmouseenter="showEvTip(event,'${e.id}')" onmouseleave="hideEvTip()"
+        ondragstart="onDragStart(event,'${e.id}')"
+        ondragend="onDragEnd(event)"
+        ontouchstart="onTouchStartEv(event,'${e.id}')"
+        ontouchmove="onTouchMoveEv(event)"
+        ontouchend="onTouchEndEv(event)">
         <div class="wk-ev-strip" style="background:${evStripH(e)}"></div>
         <div class="wk-ev-title" style="color:${evFirst(e)}">${e.title}</div>
         <div class="wk-ev-time">${e.start}-${e.end}</div>
@@ -603,7 +658,10 @@ function rWeek(c){
         <div class="wd">${dn[i]}</div>
         <div class="wn">${d.getDate()}</div>
       </div>
-      <div class="wk-col-body">
+      <div class="wk-col-body wk-col-drop" data-ds="${ds}"
+        ondragover="onDragOver(event)"
+        ondragleave="onDragLeave(event)"
+        ondrop="onDrop(event,'${ds}')">
         ${cards}
         ${isEmpty?`<div class="wk-empty">Libre</div>`:''}
         <div class="wk-add" onclick="openEvModal('${ds}')">+</div>
@@ -638,7 +696,7 @@ function rDay(c){
   let cards = fe.map(e=>{
     const ppl=(e.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dev-av" style="background:${p.color}22;color:${p.color}">${p.ini}</div>`:''}).join('');
     const catLabel={'meeting':'R\u00e9union','task':'T\u00e2che','deadline':'Deadline','other':'Autre'}[e.cat]||e.cat;
-    return `<div class="dev-card" onclick="showDt('${e.id}')">
+    return `<div class="dev-card" onclick="showDt('${e.id}')" onmouseenter="showEvTip(event,'${e.id}')" onmouseleave="hideEvTip()">
       <div class="dev-time">
         <span class="dev-time-start">${e.start}</span>
         <div class="dev-bar" style="background:${evBarGrad(e)}"></div>
@@ -742,13 +800,158 @@ setInterval(() => {
 
 function updateSyncBar(){const bar=document.getElementById('syncBar'),dot=document.getElementById('sdot'),txt=document.getElementById('syncTxt');if(backUrl){bar.className='sync-bar ok';dot.className='sdot pulse';txt.textContent='Sync active'+(curUser?' - '+curUser:'');bar.querySelector('button').textContent='Modifier';}else{bar.className='sync-bar';dot.className='sdot';txt.textContent='Mode local';}}
 
-['mEv','mDt','mTd','mCfg','mPlan'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===e.currentTarget)cm(id);});});
+['mEv','mDt','mTd','mCfg','mPlan','mPers'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===e.currentTarget)cm(id);});});
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 updateSyncBar();
 if(backUrl){loadFromSheet();setInterval(loadFromSheet,30000);}
 render();
+// -- GESTION PERSONNES --
+function savePersons(){localStorage.setItem('ev_persons',JSON.stringify(PERSONS));}
+function genIni(name){const p=name.trim().split(/\s+/);return(p.length>=2?p[0][0]+p[p.length-1][0]:name.trim().slice(0,2)).toUpperCase();}
+let _editPersId=null,_persColor='#5046e5',_persFormOpen=false;
+function openPersMgr(){_editPersId=null;_persFormOpen=false;rPersMgr();document.getElementById('mPers').classList.add('open');}
+function rPersMgr(){
+  const list=PERSONS.map(p=>`<div class="pers-item">
+    <div class="pers-av-lg" style="background:${p.color}22;color:${p.color}">${p.ini}</div>
+    <div class="pers-info"><div class="pers-nm">${p.name}</div><div class="pers-in">${p.ini} &bull; <span style="color:${p.color}">${p.color}</span></div></div>
+    <button class="pers-edt" onclick="startEditPers('${p.id}')">&#9998;</button>
+    ${PERSONS.length>1?`<button class="pers-del2" onclick="delPers('${p.id}')">&#10005;</button>`:''}
+  </div>`).join('');
+  const form=_persFormOpen?`<div class="pers-form">
+    <div class="pers-preview" id="persPreview" style="background:${_persColor}22;color:${_persColor}">AB</div>
+    <div style="margin-bottom:11px"><label>Nom complet</label><input type="text" id="persName" placeholder="Ex : Marie Dupont" oninput="updatePersPreview()" value="${_editPersId?PERSONS.find(p=>p.id===_editPersId)?.name||'':''}" style="width:100%;background:var(--bg);border:1.5px solid var(--bd);border-radius:9px;color:var(--tx);padding:9px 11px;font-family:\'DM Sans\',sans-serif;font-size:0.88rem;outline:none;"></div>
+    <div style="margin-bottom:13px"><label>Couleur</label>
+    <div class="cpkr" id="persCp"></div></div>
+    <div class="fax"><button class="bcnl" onclick="_persFormOpen=false;rPersMgr()">Annuler</button><button class="bsav" onclick="savePers()">Enregistrer</button></div>
+  </div>`:`<button class="btn-add-pers" onclick="startAddPers()">+ Ajouter une personne</button>`;
+  document.getElementById('persList').innerHTML=list+form;
+  if(_persFormOpen){rPersCp();updatePersPreview();}
+}
+function startAddPers(){_editPersId=null;_persColor=COLORS[PERSONS.length%COLORS.length];_persFormOpen=true;rPersMgr();}
+function startEditPers(id){_editPersId=id;const p=PERSONS.find(x=>x.id===id);_persColor=p?p.color:COLORS[0];_persFormOpen=true;rPersMgr();}
+function updatePersPreview(){const n=(document.getElementById('persName')||{}).value||'';const ini=n.trim()?genIni(n):'??';const pr=document.getElementById('persPreview');if(pr){pr.textContent=ini;pr.style.background=_persColor+'22';pr.style.color=_persColor;}}
+function rPersCp(){const cp=document.getElementById('persCp');if(!cp)return;const isCustom=!COLORS.includes(_persColor);cp.innerHTML=COLORS.map(c=>`<div class="cdot${c===_persColor?' sel':''}" style="background:${c}" onclick="_persColor='${c}';rPersCp();updatePersPreview()"></div>`).join('')+`<input type="color" class="cpick${isCustom?' sel':''}" value="${_persColor}" title="Couleur personnalis\u00e9e" oninput="_persColor=this.value;rPersCp();updatePersPreview()">`;}
+function savePers(){const nameEl=document.getElementById('persName');const name=nameEl?nameEl.value.trim():'';if(!name){toast('Le nom est obligatoire');return;}const ini=genIni(name);if(_editPersId){PERSONS=PERSONS.map(p=>p.id===_editPersId?{...p,name,ini,color:_persColor}:p);toast('Modifi\u00e9');}else{PERSONS.push({id:'p'+Date.now(),name,ini,color:_persColor});toast('Personne ajout\u00e9e');}savePersons();_persFormOpen=false;_editPersId=null;rPersMgr();render();}
+function delPers(id){if(PERSONS.length<=1){toast('Gardez au moins une personne');return;}PERSONS=PERSONS.filter(p=>p.id!==id);savePersons();rPersMgr();render();toast('Supprim\u00e9');}
+
+// -- TOOLTIP SURVOL --
+let _tipTimer=null;
+function showEvTip(e,evId){
+  clearTimeout(_tipTimer);
+  const ev=events.find(x=>x.id===evId);if(!ev)return;
+  const fc=evFirst(ev);
+  const tip=document.getElementById('evTip');
+  // Title
+  const titleEl=document.getElementById('evTipTitle');titleEl.textContent=ev.title;titleEl.style.color=fc;
+  // Time & date
+  const ds=pd(ev.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('evTipTime').innerHTML='&#128197; '+ds+(ev.start?'  &bull;  '+ev.start+' - '+ev.end:'');
+  // Category
+  const catLabel={meeting:'R\u00e9union',task:'T\u00e2che',deadline:'Deadline',other:'Autre'}[ev.cat]||ev.cat;
+  const catEl=document.getElementById('evTipCat');catEl.textContent=catLabel;catEl.style.background=fc+'22';catEl.style.color=fc;
+  // Persons
+  const avsEl=document.getElementById('evTipAvs');
+  const avsHtml=(ev.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="tav" style="background:${p.color}33;color:${p.color}">${p.ini}</div>`:''}).join('');
+  avsEl.innerHTML=avsHtml;avsEl.style.display=avsHtml?'flex':'none';
+  // Description
+  const descEl=document.getElementById('evTipDesc');
+  if(ev.desc&&ev.desc.trim()){descEl.textContent=ev.desc.length>90?ev.desc.slice(0,90)+'...':ev.desc;descEl.style.display='block';}else{descEl.style.display='none';}
+  // Position
+  const mx=e.clientX,my=e.clientY,W=window.innerWidth,H=window.innerHeight,TW=250;
+  let lx=mx+16,ly=my-10;
+  if(lx+TW>W-8)lx=mx-TW-16;
+  if(ly+220>H-8)ly=H-228;
+  if(ly<8)ly=8;
+  tip.style.left=lx+'px';tip.style.top=ly+'px';
+  tip.classList.add('show');
+}
+function hideEvTip(){_tipTimer=setTimeout(()=>{const t=document.getElementById('evTip');if(t)t.classList.remove('show');},120);}
+
+// -- DRAG & DROP REPROGRAMMER --
+let dragEvId=null,dragInProgress=false,_dndMoved=false;
+let _touchDragTimer=null,_touchGhost=null,_touchOriginCard=null,_touchDragId=null;
+
+function onDragStart(e,evId){
+  dragEvId=evId;_dndMoved=false;
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain',evId);
+  setTimeout(()=>{const el=document.querySelector('[data-ev-id="'+evId+'"]');if(el)el.classList.add('dragging');},0);
+}
+function onDragEnd(e){
+  dragEvId=null;
+  document.querySelectorAll('.wk-ev-mini.dragging').forEach(el=>el.classList.remove('dragging'));
+  document.querySelectorAll('.wk-col-drop.drag-over').forEach(el=>el.classList.remove('drag-over'));
+}
+function onDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  document.querySelectorAll('.wk-col-drop.drag-over').forEach(el=>el.classList.remove('drag-over'));
+  e.currentTarget.classList.add('drag-over');
+}
+function onDragLeave(e){
+  if(!e.currentTarget.contains(e.relatedTarget))e.currentTarget.classList.remove('drag-over');
+}
+function onDrop(e,ds){
+  e.preventDefault();
+  _dndMoved=true;
+  e.currentTarget.classList.remove('drag-over');
+  const evId=dragEvId||e.dataTransfer.getData('text/plain');
+  if(evId)dropOnDay(evId,ds);
+}
+function dropOnDay(evId,ds){
+  const ev=events.find(e=>e.id===evId);
+  if(!ev||ev.date===ds)return;
+  const lbl=pd(ds).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  events=events.map(e=>e.id===evId?{...e,date:ds,updatedAt:new Date().toISOString()}:e);
+  saveEvLocal();scheduleSync();render();
+  toast('D\u00e9plac\u00e9 au '+lbl);
+}
+
+// Touch drag (long press 400ms)
+function onTouchStartEv(e,evId){
+  _touchDragTimer=setTimeout(()=>{
+    _touchDragId=evId;dragInProgress=true;_dndMoved=true;
+    if(navigator.vibrate)navigator.vibrate(55);
+    const card=e.currentTarget;
+    _touchOriginCard=card;
+    card.classList.add('dragging');
+    const r=card.getBoundingClientRect();
+    const ev=events.find(x=>x.id===evId);
+    _touchGhost=document.createElement('div');
+    _touchGhost.className='td-ghost';
+    _touchGhost.style.left=r.left+'px';
+    _touchGhost.style.top=r.top+'px';
+    _touchGhost.style.width=Math.min(r.width,160)+'px';
+    _touchGhost.textContent=ev?ev.title:'';
+    document.body.appendChild(_touchGhost);
+  },400);
+}
+function onTouchMoveEv(e){
+  if(_touchDragTimer&&!dragInProgress){const t=e.touches[0];const dx=Math.abs(t.clientX-(e.touches[0].clientX));if(dx>8){clearTimeout(_touchDragTimer);_touchDragTimer=null;}}
+  if(!dragInProgress||!_touchGhost)return;
+  e.preventDefault();
+  const t=e.touches[0];
+  _touchGhost.style.left=(t.clientX-_touchGhost.offsetWidth/2)+'px';
+  _touchGhost.style.top=(t.clientY-40)+'px';
+  document.querySelectorAll('.wk-col-drop').forEach(el=>el.classList.remove('drag-over'));
+  const under=document.elementFromPoint(t.clientX,t.clientY);
+  if(under){const col=under.closest('.wk-col-drop');if(col)col.classList.add('drag-over');}
+}
+function onTouchEndEv(e){
+  clearTimeout(_touchDragTimer);_touchDragTimer=null;
+  if(!dragInProgress||!_touchGhost){dragInProgress=false;_dndMoved=false;return;}
+  const t=e.changedTouches[0];
+  const under=document.elementFromPoint(t.clientX,t.clientY);
+  if(under){const col=under.closest('.wk-col-drop');if(col&&col.dataset.ds)dropOnDay(_touchDragId,col.dataset.ds);}
+  _touchGhost.remove();_touchGhost=null;
+  if(_touchOriginCard){_touchOriginCard.classList.remove('dragging');_touchOriginCard=null;}
+  document.querySelectorAll('.wk-col-drop.drag-over').forEach(el=>el.classList.remove('drag-over'));
+  dragInProgress=false;_touchDragId=null;
+  setTimeout(()=>{_dndMoved=false;},50);
+}
+
 // -- SWIPE NAVIGATION --
 (function(){
   var startX=0, startY=0, startT=0;
@@ -762,6 +965,7 @@ render();
   }, {passive: true});
 
   el.addEventListener('touchend', function(e){
+    if(dragInProgress)return;
     var t = e.changedTouches[0];
     var dx = t.clientX - startX;
     var dy = t.clientY - startY;
