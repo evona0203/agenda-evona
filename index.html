@@ -311,6 +311,36 @@ textarea{resize:vertical;min-height:58px;}
 input[type=color].cpick{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;padding:0;background:none;transition:transform .15s;}
 input[type=color].cpick:hover{transform:scale(1.1);}
 input[type=color].cpick.sel{border-color:#fff;box-shadow:0 0 0 2px var(--ac);}
+/* MULTI-JOURS */
+.wk-md-ev{padding:4px 8px;margin-bottom:4px;font-size:0.72rem;font-weight:600;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-radius:5px;transition:filter .15s;}
+.wk-md-ev:hover{filter:brightness(.9);}
+.wk-md-ev.md-start{border-radius:6px 2px 2px 6px;}
+.wk-md-ev.md-end{border-radius:2px 6px 6px 2px;}
+.wk-md-ev.md-mid{border-radius:2px;}
+.wk-md-ev.md-solo{border-radius:6px;}
+.wk-md-sep{border-top:1px dashed var(--bd);margin:4px 0 5px;}
+.day-allday{padding:10px 12px 0;display:flex;flex-direction:column;gap:5px;}
+.day-allday-card{border-radius:10px;padding:8px 12px;font-weight:600;font-size:0.85rem;display:flex;align-items:center;justify-content:space-between;}
+.day-allday-badge{font-size:0.65rem;opacity:.75;font-weight:400;}
+.tp.md-l{border-radius:0 4px 4px 0;margin-left:0;}
+.tp.md-r{border-radius:4px 0 0 4px;margin-right:0;}
+.tp.md-lr{border-radius:0;}
+/* MODAL DUPLIQUER */
+.dup-cal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.dup-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;margin-bottom:12px;}
+.dup-dn{font-size:0.6rem;color:var(--tm);padding:3px 0;font-weight:600;}
+.dup-dc{padding:7px 2px;border-radius:8px;cursor:pointer;font-size:0.8rem;border:1.5px solid transparent;transition:all .15s;line-height:1;}
+.dup-dc:hover:not(.dup-orig):not(.dup-om){background:var(--sf2);border-color:var(--bd);}
+.dup-dc.dup-sel{background:var(--ac);color:#fff;font-weight:700;border-color:var(--ac);}
+.dup-dc.dup-today{color:var(--ac);font-weight:700;}
+.dup-dc.dup-sel.dup-today{color:#fff;}
+.dup-dc.dup-orig{opacity:.35;cursor:default;text-decoration:line-through;}
+.dup-dc.dup-om{opacity:.18;cursor:default;}
+.dup-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;min-height:4px;}
+.dup-tag{background:rgba(80,70,229,.1);color:var(--ac);border:1px solid rgba(80,70,229,.2);border-radius:20px;padding:4px 10px;font-size:0.74rem;display:flex;align-items:center;gap:5px;cursor:pointer;transition:all .15s;}
+.dup-tag:hover{background:rgba(80,70,229,.2);}
+.dup-ev-label{font-weight:600;margin-bottom:11px;padding:9px 12px;background:var(--sf2);border-radius:9px;font-size:0.88rem;color:var(--ac);border-left:3px solid var(--ac);}
+.bsav:disabled{opacity:.45;cursor:not-allowed;}
 </style>
 </head>
 <body>
@@ -395,11 +425,16 @@ input[type=color].cpick.sel{border-color:#fff;box-shadow:0 0 0 2px var(--ac);}
   <div class="fg"><label>Titre</label><input type="text" id="evT" placeholder="Titre de la tache"></div>
   <div class="fg"><label>Description</label><textarea id="evD" placeholder="Optionnel..."></textarea></div>
   <div class="r2">
-    <div class="fg"><label>Date</label><input type="date" id="evDt"></div>
-    <div class="fg"><label>Categorie</label><select id="evC"><option value="meeting">Reunion</option><option value="task">Tache</option><option value="deadline">Deadline</option><option value="other">Autre</option></select></div>
+    <div class="fg"><label>Date d&#233;but</label><input type="date" id="evDt"></div>
+    <div class="fg"><label>Cat&#233;gorie</label><select id="evC"><option value="meeting">Reunion</option><option value="task">Tache</option><option value="deadline">Deadline</option><option value="other">Autre</option></select></div>
   </div>
-  <div class="r2">
-    <div class="fg"><label>Heure debut</label><input type="time" id="evS" value="09:00"></div>
+  <label class="chk-row" style="margin-bottom:9px;">
+    <input type="checkbox" id="evMulti" onchange="toggleEvMulti()">
+    <span>&#128197; Sur plusieurs jours</span>
+  </label>
+  <div class="fg" id="evDtEndRow" style="display:none"><label>Date de fin</label><input type="date" id="evDtEnd"></div>
+  <div id="evTimeRow" class="r2">
+    <div class="fg"><label>Heure d&#233;but</label><input type="time" id="evS" value="09:00"></div>
     <div class="fg"><label>Heure fin</label><input type="time" id="evE" value="10:00"></div>
   </div>
   <div class="fg"><label>Couleur</label><div class="cpkr" id="evCp"></div></div>
@@ -415,6 +450,7 @@ input[type=color].cpick.sel{border-color:#fff;box-shadow:0 0 0 2px var(--ac);}
   <div class="dact">
     <button class="bdel" onclick="deleteEvent()">&#128465; Supprimer</button>
     <button class="bedt" onclick="editEvent()">&#9999; Modifier</button>
+    <button class="bedt" onclick="openDupModal(detEvId)" style="border-color:rgba(80,70,229,.25);color:var(--ac);">&#128203; Dupliquer</button>
     <button class="bsav" style="margin-left:auto" onclick="cm('mDt')">Fermer</button>
   </div>
 </div></div>
@@ -434,6 +470,22 @@ input[type=color].cpick.sel{border-color:#fff;box-shadow:0 0 0 2px var(--ac);}
   </div>
   <div class="fg"><label>Personnes suggerees</label><div class="psl" id="tdPp"></div></div>
   <div class="fax"><button class="bcnl" onclick="cm('mTd')">Annuler</button><button class="bsav" onclick="saveTodo()">Enregistrer</button></div>
+</div></div>
+
+<!-- MODAL DUPLIQUER -->
+<div class="mbd" id="mDup"><div class="modal">
+  <div class="mhandle"></div>
+  <div class="mtitle">&#128203; Dupliquer sur d'autres jours<button class="mclose" onclick="cm('mDup')">&#10005;</button></div>
+  <div class="dup-ev-label" id="dupEvLabel"></div>
+  <p style="font-size:0.8rem;color:var(--tm);margin-bottom:13px;">S&#233;lectionnez les jours sur lesquels copier cette t&#226;che. Le jour d'origine est barr&#233;.</p>
+  <div class="dup-cal-hd">
+    <button class="cn-btn" onclick="dupNav(-1)">&#9664;</button>
+    <span id="dupMonthTxt" style="font-weight:700;font-size:0.88rem;"></span>
+    <button class="cn-btn" onclick="dupNav(1)">&#9654;</button>
+  </div>
+  <div id="dupGrid"></div>
+  <div id="dupTags"></div>
+  <div class="fax"><button class="bcnl" onclick="cm('mDup')">Annuler</button><button class="bsav" id="dupConfirm" onclick="confirmDup()" disabled>S&#233;lectionnez des jours</button></div>
 </div></div>
 
 <!-- MODAL PLANIFIER -->
@@ -601,7 +653,7 @@ function openFilter(){renderFD();document.getElementById('fbd').classList.add('o
 function closeFilter(){document.getElementById('fbd').classList.remove('open');document.getElementById('fdw').classList.remove('open');}
 function renderFD(){const el=document.getElementById('fdwList');el.innerHTML=`<div class="fdw-all${!fp.length?' active':''}" onclick="faAll()">&#128101; Toutes les personnes</div>`;PERSONS.forEach(p=>{const a=fp.includes(p.id);el.innerHTML+=`<div class="fdw-chip${a?' active':''}" onclick="fTog('${p.id}')"><div class="fdw-av" style="background:${p.color}22;color:${p.color}">${p.ini}</div><span class="fdw-name">${p.name}</span><div class="fdw-ck">${a?'&#10003;':''}</div></div>`;});}
 
-function rMonth(c){const y=cd.getFullYear(),m=cd.getMonth(),fi=new Date(y,m,1),la=new Date(y,m+1,0),sd=(fi.getDay()+6)%7;const fe=fEv();const dn=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];let h=`<div class="mv"><div class="mh">${dn.map(d=>`<div class="mhc">${d}</div>`).join('')}</div><div class="mg">`;const pl=new Date(y,m,0);for(let i=sd-1;i>=0;i--)h+=`<div class="mc om"><div class="dn2">${pl.getDate()-i}</div></div>`;for(let d=1;d<=la.getDate();d++){const dd=new Date(y,m,d),ds=fd(dd),de=fe.filter(e=>e.date===ds);h+=`<div class="mc${isT(dd)?' today':''}" onclick="jd(${y},${m},${d})"><div class="dn2">${d}</div>`;de.slice(0,3).forEach(e=>h+=`<div class="tp" style="background:${evBgGrad(e,.2)};color:${evFirst(e)}" onclick="event.stopPropagation();showDt('${e.id}')" onmouseenter="showEvTip(event,'${e.id}')" onmouseleave="hideEvTip()"><div class="tp-dot"></div>${e.title}</div>`);if(de.length>3)h+=`<div class="more-t">+${de.length-3}</div>`;h+='</div>';}const rem=(7-(sd+la.getDate())%7)%7;for(let d=1;d<=rem;d++)h+=`<div class="mc om"><div class="dn2">${d}</div></div>`;h+='</div></div>';c.innerHTML=h;}
+function rMonth(c){const y=cd.getFullYear(),m=cd.getMonth(),fi=new Date(y,m,1),la=new Date(y,m+1,0),sd=(fi.getDay()+6)%7;const fe=fEv();const dn=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];let h=`<div class="mv"><div class="mh">${dn.map(d=>`<div class="mhc">${d}</div>`).join('')}</div><div class="mg">`;const pl=new Date(y,m,0);for(let i=sd-1;i>=0;i--)h+=`<div class="mc om"><div class="dn2">${pl.getDate()-i}</div></div>`;for(let d=1;d<=la.getDate();d++){const dd=new Date(y,m,d),ds=fd(dd),de=fe.filter(e=>evOnDate(e,ds));h+=`<div class="mc${isT(dd)?' today':''}" onclick="jd(${y},${m},${d})"><div class="dn2">${d}</div>`;de.slice(0,3).forEach(e=>{const md=isMultiDay(e);const noL=md&&e.date<ds;const noR=md&&e.dateEnd>ds;const cls=md?(noL&&noR?'tp md-lr':noL?'tp md-l':noR?'tp md-r':'tp'):'tp';h+=`<div class="${cls}" style="background:${evBgGrad(e,.2)};color:${evFirst(e)}" onclick="event.stopPropagation();showDt('${e.id}')" onmouseenter="showEvTip(event,'${e.id}')" onmouseleave="hideEvTip()"><div class="tp-dot"></div>${noL?'':e.title}</div>`;});if(de.length>3)h+=`<div class="more-t">+${de.length-3}</div>`;h+='</div>';}const rem=(7-(sd+la.getDate())%7)%7;for(let d=1;d<=rem;d++)h+=`<div class="mc om"><div class="dn2">${d}</div></div>`;h+='</div></div>';c.innerHTML=h;}
 
 function calcLayout(evs){
   const cols=[];
@@ -627,14 +679,16 @@ function rWeek(c){
 
   const cols = days.map((d,i)=>{
     const ds=fd(d);
-    let evs=fe.filter(e=>e.date===ds);
-    evs.sort((a,b)=>{
+    let evs=fe.filter(e=>evOnDate(e,ds));
+    const mdEvs=evs.filter(e=>isMultiDay(e));
+    const sdEvs=evs.filter(e=>!isMultiDay(e));
+    sdEvs.sort((a,b)=>{
       const ta=a.start.split(':').map(Number);
       const tb=b.start.split(':').map(Number);
       return (ta[0]*60+ta[1])-(tb[0]*60+tb[1]);
     });
 
-    const cards = evs.map(e=>{
+    const cards = sdEvs.map(e=>{
       const ppl=(e.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="wk-ev-av" style="background:${p.color}22;color:${p.color}">${p.ini}</div>`:''}).join('');
       return `<div class="wk-ev-mini" data-ev-id="${e.id}" draggable="true" style="background:${evBgGrad(e,.1)}"
         onclick="if(!_dndMoved)showDt('${e.id}');_dndMoved=false;"
@@ -651,7 +705,8 @@ function rWeek(c){
       </div>`;
     }).join('');
 
-    const isEmpty = evs.length === 0;
+    const mdBanners=mdEvs.map(e=>{const fc=evFirst(e);const isStart=e.date===ds;const isEnd=e.dateEnd===ds;const cls='wk-md-ev '+(isStart&&isEnd?'md-solo':isStart?'md-start':isEnd?'md-end':'md-mid');return`<div class="${cls}" style="background:${fc}22;color:${fc}" onclick="showDt('${e.id}')" onmouseenter="showEvTip(event,'${e.id}')" onmouseleave="hideEvTip()">${!isStart?'&#9664; ':''}${e.title}${!isEnd?' &#9654;':''}</div>`;}).join('');
+    const isEmpty = sdEvs.length === 0 && mdEvs.length === 0;
 
     return `<div class="wk-col-card">
       <div class="wk-col-hd${isT(d)?' today':''}" onclick="jd(${d.getFullYear()},${d.getMonth()},${d.getDate()})">
@@ -662,6 +717,7 @@ function rWeek(c){
         ondragover="onDragOver(event)"
         ondragleave="onDragLeave(event)"
         ondrop="onDrop(event,'${ds}')">
+        ${mdBanners}${mdBanners&&cards?'<div class="wk-md-sep"></div>':''}
         ${cards}
         ${isEmpty?`<div class="wk-empty">Libre</div>`:''}
         <div class="wk-add" onclick="openEvModal('${ds}')">+</div>
@@ -674,7 +730,9 @@ function rWeek(c){
 
 function rDay(c){
   const ds=fd(cd);
-  let fe=fEv().filter(e=>e.date===ds);
+  const allEvs=fEv().filter(e=>evOnDate(e,ds));
+  const mdEvs=allEvs.filter(e=>isMultiDay(e));
+  let fe=allEvs.filter(e=>!isMultiDay(e));
   if(fe.length>1) calcLayout(fe);
 
   // Trie par heure de debut
@@ -685,11 +743,16 @@ function rDay(c){
   });
 
   const dateLabel = pd(ds).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  const mdSection=mdEvs.length?`<div class="day-allday">${mdEvs.map(e=>{const fc=evFirst(e);const dur=Math.round((new Date(e.dateEnd)-new Date(e.date))/(86400000))+1;return`<div class="day-allday-card" style="background:${evBgGrad(e,.15)};color:${fc}" onclick="showDt('${e.id}')" onmouseenter="showEvTip(event,'${e.id}')" onmouseleave="hideEvTip()"><span>${e.title}</span><span class="day-allday-badge">${dur} jour${dur>1?'s':''}</span></div>`;}).join('')}</div>`:'';
 
-  if(fe.length===0){
+  if(fe.length===0&&mdEvs.length===0){
     c.innerHTML=`<div class="dv"><div style="padding:14px 12px 4px;font-size:0.75rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;">${dateLabel}</div>
       <div class="day-empty"><div class="day-empty-ic">&#128197;</div>Aucune tache ce jour<button onclick="openEvModal('${ds}')" style="padding:8px 18px;border-radius:var(--r);border:1.5px solid var(--ac);background:transparent;color:var(--ac);font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;">+ Ajouter</button></div>
     </div>`;
+    return;
+  }
+  if(fe.length===0&&mdEvs.length>0){
+    c.innerHTML=`<div class="dv"><div style="padding:14px 12px 4px;font-size:0.75rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;">${dateLabel}</div>${mdSection}<div style="text-align:center;padding:20px;color:var(--tm);font-size:0.82rem;">Pas de tache horaire</div><div class="dev-add" onclick="openEvModal('${ds}')">+ Ajouter une tache</div></div>`;
     return;
   }
 
@@ -714,6 +777,7 @@ function rDay(c){
   }).join('');
 
   c.innerHTML=`<div class="dv"><div style="padding:14px 12px 8px;font-size:0.75rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;">${dateLabel}</div>
+    ${mdSection}
     <div style="overflow-y:auto;flex:1;">${cards}
     <div class="dev-add" onclick="openEvModal('${ds}')">+ Ajouter une t\u00e2che</div>
     </div></div>`;
@@ -734,13 +798,16 @@ function togglePlanAllDay(){const allDay=document.getElementById('planAllDay').c
 function rPlanCp(){document.getElementById('planCp').innerHTML=COLORS.map(c=>`<div class="cdot${c===planColor?' sel':''}" style="background:${c}" onclick="planColor='${c}';rPlanCp()"></div>`).join('');}
 function confirmPlan(){const t=todos.find(x=>x.id===planTdId);if(!t)return;const date=document.getElementById('planDate').value;if(!date){toast('Choisissez une date');return;}const ev={id:uid(),title:t.title,desc:t.desc||'',date,start:document.getElementById('planStart').value,end:document.getElementById('planEnd').value,cat:document.getElementById('planCat').value,color:planColor,persons:t.persons&&t.persons.length?t.persons:(t.claimedBy||[]),createdBy:curUser||'Moi',updatedAt:new Date().toISOString()};events.push(ev);saveEvLocal();if(!document.getElementById('planKeep').checked){todos=todos.filter(x=>x.id!==planTdId);saveTdLocal();}doSync();cm('mPlan');cd=new Date(date+'T12:00:00');setView('day');toast('Tache planifiee !');}
 
-function openEvModal(ds){editEvId=null;document.getElementById('mEvTxt').textContent='Nouvelle tache agenda';document.getElementById('evT').value='';document.getElementById('evD').value='';document.getElementById('evDt').value=ds||fd(cd);document.getElementById('evS').value='09:00';document.getElementById('evE').value='10:00';document.getElementById('evC').value='task';selColor=COLORS[0];selPpEv=[];rEvCp();rEvPp();document.getElementById('mEv').classList.add('open');setTimeout(()=>document.getElementById('evT').focus(),200);}
-function openEvEdit(ev){editEvId=ev.id;document.getElementById('mEvTxt').textContent='Modifier';document.getElementById('evT').value=ev.title;document.getElementById('evD').value=ev.desc||'';document.getElementById('evDt').value=ev.date;document.getElementById('evS').value=ev.start;document.getElementById('evE').value=ev.end;document.getElementById('evC').value=ev.cat||'task';selColor=ev.color;selPpEv=[...(ev.persons||[])];rEvCp();rEvPp();document.getElementById('mEv').classList.add('open');}
+function isMultiDay(ev){return ev.dateEnd&&ev.dateEnd>ev.date;}
+function evOnDate(ev,ds){return isMultiDay(ev)?(ev.date<=ds&&ds<=ev.dateEnd):(ev.date===ds);}
+function toggleEvMulti(){const on=document.getElementById('evMulti').checked;document.getElementById('evDtEndRow').style.display=on?'':'none';document.getElementById('evTimeRow').style.display=on?'none':'';if(on&&!document.getElementById('evDtEnd').value)document.getElementById('evDtEnd').value=document.getElementById('evDt').value;}
+function openEvModal(ds){editEvId=null;document.getElementById('mEvTxt').textContent='Nouvelle tache agenda';document.getElementById('evT').value='';document.getElementById('evD').value='';document.getElementById('evDt').value=ds||fd(cd);document.getElementById('evS').value='09:00';document.getElementById('evE').value='10:00';document.getElementById('evC').value='task';document.getElementById('evMulti').checked=false;document.getElementById('evDtEndRow').style.display='none';document.getElementById('evTimeRow').style.display='';selColor=COLORS[0];selPpEv=[];rEvCp();rEvPp();document.getElementById('mEv').classList.add('open');setTimeout(()=>document.getElementById('evT').focus(),200);}
+function openEvEdit(ev){editEvId=ev.id;document.getElementById('mEvTxt').textContent='Modifier';document.getElementById('evT').value=ev.title;document.getElementById('evD').value=ev.desc||'';document.getElementById('evDt').value=ev.date;document.getElementById('evS').value=ev.start||'09:00';document.getElementById('evE').value=ev.end||'10:00';document.getElementById('evC').value=ev.cat||'task';const multi=isMultiDay(ev);document.getElementById('evMulti').checked=multi;document.getElementById('evDtEndRow').style.display=multi?'':'none';document.getElementById('evTimeRow').style.display=multi?'none':'';if(multi)document.getElementById('evDtEnd').value=ev.dateEnd;selColor=ev.color;selPpEv=[...(ev.persons||[])];rEvCp();rEvPp();document.getElementById('mEv').classList.add('open');}
 function rEvCp(){document.getElementById('evCp').innerHTML=COLORS.map(c=>`<div class="cdot${c===selColor?' sel':''}" style="background:${c}" onclick="selColor='${c}';rEvCp()"></div>`).join('');}
 function rEvPp(){document.getElementById('evPp').innerHTML=PERSONS.map(p=>`<div class="psc${selPpEv.includes(p.id)?' sel':''}" onclick="tEvP('${p.id}')"><div class="psa" style="background:${p.color}33;color:${p.color}">${p.ini}</div>${p.name}</div>`).join('');}
 function tEvP(id){selPpEv.includes(id)?selPpEv=selPpEv.filter(x=>x!==id):selPpEv.push(id);rEvPp();}
-function saveEvent(){const title=document.getElementById('evT').value.trim();if(!title){toast('Le titre est obligatoire');return;}const ev={id:editEvId||uid(),title,desc:document.getElementById('evD').value.trim(),date:document.getElementById('evDt').value,start:document.getElementById('evS').value,end:document.getElementById('evE').value,cat:document.getElementById('evC').value,color:selColor,persons:[...selPpEv],createdBy:curUser||'Moi',updatedAt:new Date().toISOString()};if(editEvId)events=events.map(e=>e.id===editEvId?ev:e);else events.push(ev);saveEvLocal();scheduleSync();cm('mEv');cm('mDt');render();toast(editEvId?'Modifie':'Ajoute');}
-function showDt(id){detEvId=id;const ev=events.find(e=>e.id===id);if(!ev)return;document.getElementById('dtTxt').textContent=ev.title;const ppl=(ev.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dper"><div class="pav" style="background:${p.color}22;color:${p.color};width:19px;height:19px;font-size:0.57rem">${p.ini}</div>${p.name}</div>`:''}).join('');document.getElementById('dtBody').innerHTML=`<div class="dl">Date & Heure</div><div class="dv2">${pd(ev.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} - ${ev.start}-${ev.end}</div>${ev.desc?`<div class="dl">Description</div><div class="dv2">${ev.desc}</div>`:''}<div class="dl">Categorie</div><div class="dv2" style="color:${ev.color}">${CATS[ev.cat]||ev.cat}</div><div class="dl">Assigne a</div><div class="dppl">${ppl||'<span style="color:var(--tm)">Non assigne</span>'}</div>${ev.createdBy?`<div style="color:var(--tm);font-size:0.72rem;margin-top:10px">Cree par ${ev.createdBy}</div>`:''}`;document.getElementById('mDt').classList.add('open');}
+function saveEvent(){const title=document.getElementById('evT').value.trim();if(!title){toast('Le titre est obligatoire');return;}const multi=document.getElementById('evMulti').checked;const dateEnd=multi?document.getElementById('evDtEnd').value:null;if(multi&&dateEnd&&dateEnd<document.getElementById('evDt').value){toast('La date de fin doit etre apres le debut');return;}const ev={id:editEvId||uid(),title,desc:document.getElementById('evD').value.trim(),date:document.getElementById('evDt').value,dateEnd:dateEnd||null,start:multi?'00:00':document.getElementById('evS').value,end:multi?'23:59':document.getElementById('evE').value,cat:document.getElementById('evC').value,color:selColor,persons:[...selPpEv],createdBy:curUser||'Moi',updatedAt:new Date().toISOString()};if(editEvId)events=events.map(e=>e.id===editEvId?ev:e);else events.push(ev);saveEvLocal();scheduleSync();cm('mEv');cm('mDt');render();toast(editEvId?'Modifie':'Ajoute');}
+function showDt(id){detEvId=id;const ev=events.find(e=>e.id===id);if(!ev)return;document.getElementById('dtTxt').textContent=ev.title;const ppl=(ev.persons||[]).map(pid=>{const p=gp(pid);return p?`<div class="dper"><div class="pav" style="background:${p.color}22;color:${p.color};width:19px;height:19px;font-size:0.57rem">${p.ini}</div>${p.name}</div>`:''}).join('');const multi=isMultiDay(ev);const dateStr=multi?pd(ev.date).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})+' &#8594; '+pd(ev.dateEnd).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}):pd(ev.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' - '+ev.start+'-'+ev.end;document.getElementById('dtBody').innerHTML=`<div class="dl">${multi?'P\u00e9riode':'Date &amp; Heure'}</div><div class="dv2">${dateStr}</div>${ev.desc?`<div class="dl">Description</div><div class="dv2">${ev.desc}</div>`:''}<div class="dl">Cat\u00e9gorie</div><div class="dv2" style="color:${ev.color}">${CATS[ev.cat]||ev.cat}</div><div class="dl">Assign\u00e9 \u00e0</div><div class="dppl">${ppl||'<span style="color:var(--tm)">Non assign\u00e9</span>'}</div>${ev.createdBy?`<div style="color:var(--tm);font-size:0.72rem;margin-top:10px">Cr\u00e9\u00e9 par ${ev.createdBy}</div>`:''}`;document.getElementById('mDt').classList.add('open');}
 function deleteEvent(){if(!detEvId)return;events=events.filter(e=>e.id!==detEvId);deletedIds.add(detEvId);saveDelLocal();saveEvLocal();doSync();cm('mDt');render();toast('Supprime');}
 function editEvent(){const ev=events.find(e=>e.id===detEvId);if(!ev)return;cm('mDt');openEvEdit(ev);}
 
@@ -800,7 +867,7 @@ setInterval(() => {
 
 function updateSyncBar(){const bar=document.getElementById('syncBar'),dot=document.getElementById('sdot'),txt=document.getElementById('syncTxt');if(backUrl){bar.className='sync-bar ok';dot.className='sdot pulse';txt.textContent='Sync active'+(curUser?' - '+curUser:'');bar.querySelector('button').textContent='Modifier';}else{bar.className='sync-bar';dot.className='sdot';txt.textContent='Mode local';}}
 
-['mEv','mDt','mTd','mCfg','mPlan','mPers'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===e.currentTarget)cm(id);});});
+['mEv','mDt','mTd','mCfg','mPlan','mPers','mDup'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===e.currentTarget)cm(id);});});
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 
@@ -868,6 +935,56 @@ function showEvTip(e,evId){
   tip.classList.add('show');
 }
 function hideEvTip(){_tipTimer=setTimeout(()=>{const t=document.getElementById('evTip');if(t)t.classList.remove('show');},120);}
+
+// -- DUPLICATION --
+let dupEvId=null,dupDates=[],dupYear=0,dupMonth=0;
+function openDupModal(id){
+  dupEvId=id;dupDates=[];
+  const ev=events.find(e=>e.id===id);
+  if(!ev)return;
+  document.getElementById('dupEvLabel').textContent=ev.title;
+  const d=pd(ev.date);dupYear=d.getFullYear();dupMonth=d.getMonth();
+  rDupCal();
+  cm('mDt');
+  document.getElementById('mDup').classList.add('open');
+}
+function dupNav(dir){dupMonth+=dir;if(dupMonth>11){dupMonth=0;dupYear++;}if(dupMonth<0){dupMonth=11;dupYear--;}rDupCal();}
+function toggleDupDate(ds){dupDates.includes(ds)?dupDates=dupDates.filter(d=>d!==ds):dupDates.push(ds);rDupCal();}
+function rDupCal(){
+  const ev=events.find(e=>e.id===dupEvId);
+  const fi=new Date(dupYear,dupMonth,1),la=new Date(dupYear,dupMonth+1,0);
+  const sd=(fi.getDay()+6)%7;
+  const mn=fi.toLocaleDateString('fr-FR',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
+  document.getElementById('dupMonthTxt').textContent=mn;
+  const pl=new Date(dupYear,dupMonth,0);
+  let g=`<div class="dup-grid"><div class="dup-dn">L</div><div class="dup-dn">M</div><div class="dup-dn">M</div><div class="dup-dn">J</div><div class="dup-dn">V</div><div class="dup-dn">S</div><div class="dup-dn">D</div>`;
+  for(let i=sd-1;i>=0;i--)g+=`<div class="dup-dc dup-om">${pl.getDate()-i}</div>`;
+  for(let d=1;d<=la.getDate();d++){
+    const dd=new Date(dupYear,dupMonth,d),ds=fd(dd);
+    const isOrig=ev&&ev.date===ds;
+    const isSel=dupDates.includes(ds);
+    const isTd=isT(dd);
+    let cls='dup-dc'+(isOrig?' dup-orig':isSel?' dup-sel':isTd?' dup-today':'');
+    const click=isOrig?'':`onclick="toggleDupDate('${ds}')"`;
+    g+=`<div class="${cls}" ${click}>${d}</div>`;
+  }
+  const rem=(7-(sd+la.getDate())%7)%7;
+  for(let d=1;d<=rem;d++)g+=`<div class="dup-dc dup-om">${d}</div>`;
+  g+='</div>';
+  document.getElementById('dupGrid').innerHTML=g;
+  const tags=dupDates.slice().sort().map(ds=>`<div class="dup-tag" onclick="toggleDupDate('${ds}')">${pd(ds).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})} &#10005;</div>`).join('');
+  document.getElementById('dupTags').innerHTML=`<div class="dup-tags">${tags}</div>`;
+  const btn=document.getElementById('dupConfirm');
+  if(dupDates.length){btn.textContent='Dupliquer sur '+dupDates.length+' jour'+(dupDates.length>1?'s':'');btn.disabled=false;}
+  else{btn.textContent='S\u00e9lectionnez des jours';btn.disabled=true;}
+}
+function confirmDup(){
+  const ev=events.find(e=>e.id===dupEvId);
+  if(!ev||!dupDates.length)return;
+  dupDates.forEach(ds=>{events.push({...ev,id:uid(),date:ds,dateEnd:null,updatedAt:new Date().toISOString()});});
+  saveEvLocal();scheduleSync();cm('mDup');render();
+  toast('Dupliqu\u00e9 sur '+dupDates.length+' jour'+(dupDates.length>1?'s !':'!'));
+}
 
 // -- DRAG & DROP REPROGRAMMER --
 let dragEvId=null,dragInProgress=false,_dndMoved=false;
